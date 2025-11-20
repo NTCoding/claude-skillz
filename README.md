@@ -29,7 +29,7 @@ Reusable skills and composable system prompts for Claude Code.
 - **claude-code-optimizer** - Workflow optimization specialist for improving Claude Code productivity
 - **requirements-expert** - Requirements analysis specialist for breaking down features into specifications
 
-## Composability
+### Composability
 
 System prompts use @ references to load skills efficiently:
 
