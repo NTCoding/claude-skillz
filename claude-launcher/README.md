@@ -1,8 +1,12 @@
 # Claude Launcher
 
-This is a simple bash script that wraps the Claude Code `--system-prompt` option. Use this script to start your claude session choosing one of your system prompts defined in `~/.claude/system-prompts`.
+Simple bash script that wraps the Claude Code `--system-prompt` option. Start your claude session by choosing from available system prompts.
 
-I have the command aliased as `cl`.
+**Discovers system prompts from:**
+- `~/.claude/system-prompts` (global)
+- `<launcher-parent>/system-prompts` (project-local)
+
+No symlinks needed. I have the command aliased as `cl`.
 
 ```bash
 ➜  code: cl
