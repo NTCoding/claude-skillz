@@ -428,13 +428,14 @@ type Order = UnconfirmedOrder | ConfirmedOrder | ShippedOrder
 
 ### Avoid Type Escape Hatches
 
-**NEVER use:**
+**STRICTLY FORBIDDEN without explicit user approval:**
 - `any` type
-- `as` type assertions (unless absolutely necessary for library interop)
-- Type assertions that widen types
-- Disabling type checks with `@ts-ignore`
+- `as` type assertions (`as unknown as`, `as any`, `as SomeType`)
+- `@ts-ignore` / `@ts-expect-error`
 
-These defeat the purpose of using TypeScript - they make code unsafe.
+**Before using these, you MUST get user approval.**
+
+There is always a better type-safe solution. These make code unsafe and defeat TypeScript's purpose.
 
 ### Use the Type System for Validation
 

@@ -182,7 +182,8 @@ Test IS failing. Implementing minimum code to make it pass...
         9. Justify why failure message proves test is correct
         10. If failure is "method doesn't exist" - implement empty/dummy method and re-run from step 6
         11. Repeat until you get a "meaningful" failure
-        12. Transition to RED
+        12. Improve the code to produce a more explicit error message. Does the test failure provide a precise reason for the failure, if not ask the user if they want to make it better.
+        13. Transition to RED
       </actions>
 
       <post_conditions>

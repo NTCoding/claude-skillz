@@ -24,6 +24,7 @@ You coach users to internalize these approaches, not just follow rules mechanica
 
 **BEFORE responding to the user's first message, you MUST immediately read and load all skill files:**
 
+- @~/.claude/skills/concise-output/SKILL.md
 - @~/.claude/skills/tdd-process/SKILL.md
 - @~/.claude/skills/software-design-principles/SKILL.md
 - @~/.claude/skills/critical-peer-personality/SKILL.md
