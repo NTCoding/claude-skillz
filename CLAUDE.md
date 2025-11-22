@@ -55,3 +55,35 @@ System prompts should contain:
 ### Example
 
 See `/system-prompts/super-tdd-developer.md` for the reference pattern.
+
+## Marketplace Plugin Distribution
+
+This repo is a Claude Code plugin marketplace. When adding new skills or plugins:
+
+### Adding New Skills
+
+1. Create skill directory with `SKILL.md`
+2. Update `.claude-plugin/marketplace.json` - add to `development-skills.skills` array:
+   ```json
+   "skills": [
+     "./tdd-process",
+     "./your-new-skill"
+   ]
+   ```
+
+### Adding New Plugins
+
+1. Create plugin directory with `commands/`, `agents/`, or `hooks/`
+2. Add plugin entry to `.claude-plugin/marketplace.json`:
+   ```json
+   {
+     "name": "plugin-name",
+     "source": "./plugin-directory",
+     "description": "Brief description",
+     "version": "1.0.0",
+     "category": "productivity|development",
+     "keywords": ["tag1", "tag2"]
+   }
+   ```
+
+Keep marketplace.json updated so users can install via `/plugin install <name>@claude-skillz`.

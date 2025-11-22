@@ -2,6 +2,34 @@
 
 Reusable skills and composable system prompts for Claude Code.
 
+## Installation
+
+### Setup Marketplace
+
+**Local:**
+```bash
+/plugin marketplace add file:///absolute/path/to/claude-skillz
+```
+
+**GitHub:**
+```bash
+/plugin marketplace add ntcoding/claude-skillz
+```
+
+### Install Plugins
+
+**Interactive:**
+1. Run `/plugin`
+2. Select `Browse and install plugins`
+3. Select `claude-skillz` marketplace
+4. Select desired plugin
+5. Select `Install now`
+
+**Direct:**
+```bash
+/plugin install <plugin-name>@claude-skillz
+```
+
 ## Skills
 
 ### Process Orchestration
@@ -40,6 +68,10 @@ System prompts use @ references to load skills efficiently:
 This avoids Read operations that consume 18k+ tokens of context.
 
 See `system-prompts/super-tdd-developer.md` for an example.
+
+## Plugins
+
+- **track-and-improve** - Capture mistakes and improvement opportunities with automatic 5 whys root cause analysis
 
 ## Tools
 

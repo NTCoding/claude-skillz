@@ -47,6 +47,32 @@ Always consult these when researching Claude Code solutions:
 
 ---
 
+## Claude Code Features
+
+**Known capabilities:**
+- Plugins (installable packages with `.claude-plugin/`)
+- Hooks (SessionStart, SessionEnd, PreToolUse, PostToolUse, UserPromptSubmit, Notification)
+- Slash commands (markdown files in `commands/`)
+- Agents (specialized sub-agents with defined tools)
+- Skills (reusable behaviors loaded via @ references)
+- MCP servers (external integrations)
+- Marketplaces (plugin distribution via git repos)
+- System prompts (persona definitions)
+- Session transcripts (`.jsonl` files in `~/.claude/projects/`)
+- Config files (`~/.claude/config.json`)
+
+**CRITICAL:** This list is not exhaustive. Always research current capabilities before proposing solutions:
+- Check official docs (code.anthropic.com/docs)
+- Search awesome-claude-code for existing solutions
+- Check r/ClaudeAI and r/ClaudeCode on Reddit
+- Look for plugins/MCP servers that solve the problem
+- Search GitHub for claude-code related repos
+- Check Discord/community discussions
+- Default to existing solutions over DIY implementations
+- When in doubt, research first
+
+---
+
 ## Implementation Validation
 
 **Before implementing, validate scope:**

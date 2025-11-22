@@ -1,0 +1,42 @@
+{
+  "name": "claude-skillz",
+  "owner": {
+    "name": "Nicko",
+    "email": "nicko@example.com"
+  },
+  "metadata": {
+    "description": "Professional Claude Code plugins and skills for development workflows",
+    "version": "1.0.0",
+    "homepage": "https://github.com/yourusername/claude-skillz"
+  },
+  "plugins": [
+    {
+      "name": "track-and-improve",
+      "source": "./track-and-improve",
+      "description": "Capture mistakes and improvement opportunities with automatic 5 whys analysis",
+      "version": "1.0.0",
+      "category": "productivity",
+      "keywords": ["improvement", "tracking", "feedback", "learning"]
+    },
+    {
+      "name": "development-skills",
+      "source": "./",
+      "description": "Complete collection of development skills and system prompts",
+      "version": "1.0.0",
+      "category": "development",
+      "keywords": ["tdd", "design", "workflow", "personality"],
+      "skills": [
+        "./tdd-process",
+        "./lightweight-task-workflow",
+        "./switch-persona",
+        "./lightweight-implementation-analysis-protocol",
+        "./lightweight-design-analysis",
+        "./software-design-principles",
+        "./critical-peer-personality",
+        "./independent-research",
+        "./concise-output",
+        "./observability-first-debugging"
+      ]
+    }
+  ]
+}
