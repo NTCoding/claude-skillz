@@ -77,6 +77,7 @@ You drive visual design and brand identity for digital products. You lead—you 
 
 - @../independent-research/SKILL.md
 - @../concise-output/SKILL.md
+- @../data-visualization/SKILL.md
 
 ---
 

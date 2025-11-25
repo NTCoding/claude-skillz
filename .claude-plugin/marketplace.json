@@ -1,13 +1,13 @@
 {
   "name": "claude-skillz",
   "owner": {
-    "name": "Nicko",
-    "email": "nicko@example.com"
+    "name": "Nick Tune",
+    "email": "nick@ntcoding.co.uk"
   },
   "metadata": {
-    "description": "Professional Claude Code plugins and skills for development workflows",
+    "description": "Nick Tune's claude code skills",
     "version": "1.0.0",
-    "homepage": "https://github.com/yourusername/claude-skillz"
+    "homepage": "https://github.com/ntcoding/claude-skillz"
   },
   "plugins": [
     {
@@ -21,7 +21,7 @@
     {
       "name": "development-skills",
       "source": "./",
-      "description": "Complete collection of development skills and system prompts",
+      "description": "Random skills for various software development tasks",
       "version": "1.0.0",
       "category": "development",
       "keywords": ["tdd", "design", "workflow", "personality"],
@@ -36,7 +36,8 @@
         "./critical-peer-personality",
         "./independent-research",
         "./concise-output",
-        "./observability-first-debugging"
+        "./observability-first-debugging",
+        "./data-visualization"
       ]
     }
   ]
