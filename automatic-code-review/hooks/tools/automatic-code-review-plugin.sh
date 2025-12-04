@@ -113,7 +113,7 @@ get_modified_files() {
     ((idx++)) || true
   done < "$log_file"
 
-  printf '%s\n' "${files[@]}" | jq -R . | jq -s .
+  printf '%s\n' "${files[@]}" | sort -u | jq -R . | jq -s .
 }
 
 get_or_initialize_plugin_settings() {
