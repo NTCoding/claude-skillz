@@ -45,7 +45,8 @@
         "./independent-research",
         "./concise-output",
         "./observability-first-debugging",
-        "./data-visualization"
+        "./data-visualization",
+        "./confidence-honesty"
       ]
     }
   ]

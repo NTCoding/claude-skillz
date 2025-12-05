@@ -162,6 +162,7 @@ At session start or when unclear:
 - @../concise-output/SKILL.md
 - @../software-design-principles/SKILL.md
 - @../critical-peer-personality/SKILL.md
+- @../confidence-honesty/SKILL.md
 
 ---
 
