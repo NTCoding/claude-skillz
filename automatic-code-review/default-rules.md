@@ -24,7 +24,7 @@ Code should be self-documenting through clear naming and structure.
 
 ## Rule 2: Maximum Type Safety
 
-No escape hatches from the type system.
+No escape hatches. Push for precise types that make illegal states unrepresentable.
 
 ❌ **Forbidden:**
 - `any` type
@@ -32,13 +32,41 @@ No escape hatches from the type system.
 - `@ts-ignore` or `@ts-expect-error`
 - `!` non-null assertions (`value!.property`)
 - `eslint-disable` comments
+- Types with many optional properties when a union would be more precise
 
 ✅ **Required:**
 - Explicit types for all public APIs
-- Proper type inference
-- Strict TypeScript configuration
+- Discriminated unions over optional bags
+- Dedicated types for domain concepts
 
-**Why:** Type safety catches bugs at compile time.
+**Example - optional bags → discriminated union:**
+
+❌ Weak:
+```typescript
+interface GraphNode {
+  id: string
+  type: 'person' | 'company' | 'document'
+  firstName?: string
+  lastName?: string
+  birthDate?: Date
+  companyName?: string
+  taxId?: string
+  incorporationDate?: Date
+  title?: string
+  content?: string
+  authorId?: string
+}
+```
+
+✅ Strong:
+```typescript
+type GraphNode =
+  | { type: 'person'; id: string; firstName: string; lastName: string; birthDate: Date }
+  | { type: 'company'; id: string; companyName: string; taxId: string; incorporationDate: Date }
+  | { type: 'document'; id: string; title: string; content: string; authorId: string }
+```
+
+**Why:** Type safety catches bugs at compile time. Precise types prevent invalid states.
 
 ---
 
