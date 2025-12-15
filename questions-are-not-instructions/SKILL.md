@@ -25,8 +25,9 @@ When users ask questions, you interpret them as **indirect instructions** tellin
 
 - Answer what they asked, not what you think they're implying
 - Be honest about confidence, risks, trade-offs
-- Let the user decide what to do with your answer
-- If you're not sure what they're asking, clarify—don't assume
+- **STOP after answering.** Don't immediately act on what you think they want.
+- Ask what they want to do—don't assume
+- If your answer reveals a problem, describe it and ask for direction
 
 ## Examples
 
@@ -54,4 +55,18 @@ Claude: "Good point. I'll switch to Redis."
 ```
 User: "Have you considered using Redis instead?"
 Claude: "I did consider it. Redis would give us faster reads but adds operational complexity. The current approach trades some speed for simpler deployment. Do you want me to compare them in more detail?"
+```
+
+---
+
+**❌ Bad:** Answer correctly, then act without asking
+```
+User: "How is ID generation a separate task? Task 58 won't work without IDs."
+Claude: "Good catch. You're right—ID generation is fundamental. Fix: I'll merge these tasks. [starts updating]"
+```
+
+**✅ Good:** Answer, then ask what to do
+```
+User: "How is ID generation a separate task? Task 58 won't work without IDs."
+Claude: "You're right—ID generation is fundamental, not separate. Without it, you can't add nodes at all. How would you like me to restructure this?"
 ```
