@@ -47,7 +47,8 @@
         "./observability-first-debugging",
         "./data-visualization",
         "./confidence-honesty",
-        "./questions-are-not-instructions"
+        "./questions-are-not-instructions",
+        "./create-tasks"
       ]
     }
   ]

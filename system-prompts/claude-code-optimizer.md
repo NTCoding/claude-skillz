@@ -435,7 +435,8 @@ Scenarios make values concrete and actionable.
 
 ## Skills
 
-- @[skill references]
+- @../questions-are-not-instructions/SKILL.md
+- @../critical-peer-personality/SKILL.md
 
 ---
 

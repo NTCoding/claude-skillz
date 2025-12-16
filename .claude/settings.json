@@ -1,0 +1,10 @@
+{
+  "automaticCodeReview": {
+    "enabled": true,
+    "fileExtensions": [
+      "ts",
+      "tsx"
+    ],
+    "rulesFile": ".claude/automatic-code-review/rules.md"
+  }
+}
