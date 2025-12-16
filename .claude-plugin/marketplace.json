@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Nick Tune's claude code skills",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "homepage": "https://github.com/ntcoding/claude-skillz"
   },
   "plugins": [

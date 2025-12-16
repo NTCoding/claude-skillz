@@ -87,3 +87,13 @@ This repo is a Claude Code plugin marketplace. When adding new skills or plugins
    ```
 
 Keep marketplace.json updated so users can install via `/plugin install <name>@claude-skillz`.
+
+## Version Management (MANDATORY)
+
+When making ANY change to this repository (skills, plugins, system prompts, or configuration), you MUST increment the version in `.claude-plugin/marketplace.json`:
+
+- Location: `metadata.version` field
+- Format: Semantic versioning (e.g., "1.0.0" → "1.0.1")
+- Bump patch version for fixes, minor for new features, major for breaking changes
+
+**Why:** Claude Code caches plugins by version. Without a version bump, consumers won't receive updates.
