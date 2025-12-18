@@ -6,10 +6,18 @@
   },
   "metadata": {
     "description": "Nick Tune's claude code skills",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "homepage": "https://github.com/ntcoding/claude-skillz"
   },
   "plugins": [
+    {
+      "name": "task-check",
+      "source": "./task-check",
+      "description": "Verify task completion before finishing work. Catches incomplete work, bugs, and quality issues.",
+      "version": "1.0.0",
+      "category": "productivity",
+      "keywords": ["task", "qa", "verification", "completion", "quality"]
+    },
     {
       "name": "automatic-code-review",
       "source": "./automatic-code-review",
