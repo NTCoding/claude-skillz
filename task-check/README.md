@@ -69,9 +69,13 @@ Read the QUESTIONS section. For each question:
 
 Keep running task-check until:
 - STATUS = PASS, or
-- User explicitly says to stop (e.g., "that's fine", "skip the check", "move on")
+- User explicitly says to stop (e.g., "that's fine", "skip the check", "move on"), or
+- You have run task-check 3 times for the same task
 
-Do NOT stop the loop because you're tired of running it. Do NOT skip task-check because the task seems simple.
+**If 3 attempts and still FAIL:**
+Stop. Tell the user: "task-check has failed 3 times. Here are the outstanding issues: [list]. I need your guidance on how to proceed."
+
+Do NOT skip the first task-check because the task seems simple.
 ```
 
 ## Manual Trigger

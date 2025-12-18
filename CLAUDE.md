@@ -90,10 +90,22 @@ Keep marketplace.json updated so users can install via `/plugin install <name>@c
 
 ## Version Management (MANDATORY)
 
-When making ANY change to this repository (skills, plugins, system prompts, or configuration), you MUST increment the version in `.claude-plugin/marketplace.json`:
+When making ANY change to this repository, you MUST increment versions in `.claude-plugin/marketplace.json`:
 
-- Location: `metadata.version` field
-- Format: Semantic versioning (e.g., "1.0.0" → "1.0.1")
-- Bump patch version for fixes, minor for new features, major for breaking changes
+### Which version to bump:
 
-**Why:** Claude Code caches plugins by version. Without a version bump, consumers won't receive updates.
+1. **Modifying a skill** (e.g., `tdd-process/SKILL.md`):
+   → Bump the `version` of the plugin that contains it (e.g., `development-skills`)
+
+2. **Modifying a plugin** (e.g., `track-and-improve/commands/`):
+   → Bump that plugin's individual `version` field
+
+3. **Adding a new plugin**:
+   → Set new plugin version to "1.0.0"
+   → Bump `metadata.version`
+
+### Format:
+- Semantic versioning (e.g., "1.0.0" → "1.0.1")
+- Patch for fixes, minor for features, major for breaking changes
+
+**Why:** Claude Code caches plugins by their INDIVIDUAL version. Bumping only `metadata.version` does nothing—clients check the plugin's own `version` field to detect updates.
