@@ -61,6 +61,7 @@ Look for explicit signals in task definition, PRD, or milestone docs:
 **Applying standards:**
 - State the detected context in CONTEXT section of report
 - Only flag issues appropriate to that context
+- **Challenge mismatches:** If task requirements conflict with detected context (e.g., tests required for a POC), flag this as a question—the requirements may be wrong.
 - If flagging something that might be out of scope for the context, note it as "LOW" severity with explanation
 
 ## Output Format
