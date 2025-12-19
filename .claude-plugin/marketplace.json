@@ -35,6 +35,14 @@
       "keywords": ["improvement", "tracking", "feedback", "learning"]
     },
     {
+      "name": "collaboration-modes",
+      "source": "./collaboration-modes",
+      "description": "Define collaboration style between Claude Code and user: step-by-step, deep-think, or pair programming",
+      "version": "1.0.0",
+      "category": "productivity",
+      "keywords": ["collaboration", "workflow", "pair-programming", "modes"]
+    },
+    {
       "name": "development-skills",
       "source": "./",
       "description": "Random skills for various software development tasks",
