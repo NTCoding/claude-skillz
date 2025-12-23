@@ -1,218 +1,293 @@
 ---
-name: TypeScript Backend Project Setup
-description: "Sets up TypeScript backend projects optimized for AI-assisted development. Triggers on: 'set up typescript backend project', 'create backend project', 'initialize typescript backend', or when working in an empty project folder."
-version: 1.0.0
+name: NX Monorepo TypeScript Backend Project Setup
+description: "Sets up NX monorepo for TypeScript backend projects optimized for AI-assisted development. Delegates to NX commands where possible, patches configs as last resort. Triggers on: 'set up typescript backend project', 'create backend project', 'initialize typescript backend', 'create monorepo', or when working in an empty project folder."
+version: 3.0.3
 ---
 
-# TypeScript Backend Project Setup
+# NX Monorepo TypeScript Backend Project Setup
 
-Set up TypeScript backend projects with maximum type safety, strict linting, 100% test coverage, and AI-optimized project structure which includes tight guardrails + context engineering patterns.
+> 🚨 **DO NOT USE PLAN MODE.** This skill IS the plan. Follow the steps exactly as written.
+
+> 🚨 **FAIL FAST:** If ANYTHING unexpected happens or you need to do something NOT in this skill, STOP and discuss with the user. Do not improvise or add extra steps. Update this skill instead.
+
+> ⚠️ **Check NX docs for latest conventions:** https://nx.dev/docs/getting-started/start-new-project
+> NX evolves quickly. Verify these instructions against current NX best practices before use.
+
+Set up NX monorepo for TypeScript backend projects with maximum type safety, strict linting, 100% test coverage, and AI-optimized project structure.
+
+## Contents
+
+1. [Phase 1: Define Project Context](#phase-1-define-project-context) - Gather requirements
+2. [Phase 2: Create NX Workspace](#phase-2-create-nx-workspace) - Run NX generator
+3. [Phase 3: Install Dependencies](#phase-3-install-dependencies) - Add plugins and tools
+4. [Phase 4: Create Initial Projects](#phase-4-create-initial-projects) - Generate packages and apps
+5. [Phase 5: Add Claude Code Integration](#phase-5-add-claude-code-integration) - Copy AI guardrails and docs
+6. [Phase 6: Enforce Strict Standards](#phase-6-enforce-strict-standards) - Patch configs
+7. [Phase 7: Establish Coding Conventions](#phase-7-establish-coding-conventions) - Add skill content
+8. [Phase 8: Activate Git Hooks](#phase-8-activate-git-hooks) - Enable pre-commit checks
+9. [Phase 9: Verify Setup](#phase-9-verify-setup) - Confirm everything works
+10. [Phase 10: Document Architecture](#phase-10-document-architecture-optional) - Optional interview
 
 ## When This Activates
 
-- User requests: "set up typescript backend project", "create backend project", "initialize typescript backend"
+- User requests: "set up typescript backend project", "create backend project", "initialize typescript backend", "create monorepo"
 - Working in an empty or near-empty project folder
 - User asks for backend project scaffolding or boilerplate
 
+## Template Location
+
+This skill uses a template located at: `typescript-backend-project-setup/template/`
+
+The template contains only files NX cannot create: Claude Code integration, documentation structure, and git hooks.
+
+Before starting, ask the user for the full path to the claude-skillz repository so you can locate the template.
+
 ## Setup Procedure
 
-### Phase 1: Project Context
+### Phase 1: Define Project Context
 
 Ask the user:
-1. **Project name** - What should this project be called?
-2. **Primary domain** - What problem domain does this serve? (e.g., "order management", "user authentication")
+1. **Workspace name** - What should this monorepo be called? (lowercase, hyphens ok)
+2. **Domain description** - Brief description of what this project does
+3. **Claude-skillz path** - What is the full path to the claude-skillz repository on your system?
+4. **Target directory** - Where should the project be created? (defaults to current directory)
+5. **Initial packages** - List any publishable packages to create (e.g., "query, builder, cli")
+6. **Initial apps** - List any applications to create (e.g., "api, docs")
 
-### Phase 2: Create Checklist
+### Phase 2: Create NX Workspace
 
-Create `repository-setup-checklist.md` in the project root to track progress:
+**Priority: Commands > Installs > Patch files (last resort)**
 
-```markdown
-# Repository Setup Checklist
-
-Track setup progress. Resume anytime by reviewing unchecked items.
-
-## Configuration Files
-- [ ] package.json
-- [ ] tsconfig.json
-- [ ] eslint.config.mjs
-- [ ] vitest.config.ts
-- [ ] .gitignore
-
-## Claude Code Integration
-- [ ] CLAUDE.md
-- [ ] AGENTS.md
-- [ ] .claude/settings.json
-- [ ] .claude/hooks/block-dangerous-commands.sh
-
-## Documentation
-- [ ] docs/conventions/codebase-structure.md
-- [ ] docs/conventions/task-workflow.md
-- [ ] docs/conventions/testing.md
-- [ ] docs/conventions/software-design.md
-- [ ] docs/architecture/overview.md
-- [ ] docs/architecture/domain-terminology/contextive/definitions.glossary.yml
-- [ ] docs/project/project-overview.md
-
-## Git Hooks
-- [ ] husky + lint-staged
-
-## Content (Optional - Interview User)
-- [ ] Architecture diagram and overview
-- [ ] Domain terminology definitions
-- [ ] Project vision and phases
-```
-
-Check off items as you complete them.
-
-### Phase 3: Configuration Files
-
-Create each file, explaining the key decisions.
-
----
-
-#### package.json
-
-```json
-{
-  "name": "[project-name]",
-  "version": "0.1.0",
-  "type": "module",
-  "scripts": {
-    "build": "npm run lint && tsc",
-    "lint": "eslint .",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "typecheck": "tsc --noEmit",
-    "knip": "knip",
-    "verify": "npm run typecheck && npm run build && npm run knip && npm run test:coverage",
-    "prepare": "husky"
-  },
-  "devDependencies": {},
-  "lint-staged": {
-    "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
-    "*.{json,md}": ["prettier --write"]
-  }
-}
-```
-
-Then install latest versions:
+Run the NX workspace generator:
 
 ```bash
-npm install -D typescript vitest @vitest/coverage-v8 eslint typescript-eslint @eslint/js eslint-plugin-no-comments prettier husky lint-staged knip
+npx create-nx-workspace@latest [workspace-name] --preset=ts --pm=pnpm --nxCloud=skip --interactive=false
 ```
 
-**Why this setup:**
-- `build` includes lint - AI gets lint feedback on every build, not just when tests run. Faster feedback loop.
-- `verify` is the hard gate - typecheck, build (with lint), knip, and tests with coverage. Pre-commit hook runs this. AI cannot bypass it.
-- `lint-staged` formats staged files at commit time
-- `knip` catches unused exports and dependencies - runs as part of verify, not every build (too slow)
-- No runtime dependencies - this is scaffolding; add domain-specific deps as needed
+This creates:
+- `nx.json` - NX configuration
+- `tsconfig.base.json` - Base TypeScript config
+- `package.json` - Root package with NX scripts
+- `pnpm-workspace.yaml` - Workspace definition
+- `.gitignore` - Standard ignores
 
----
+**Checkpoint:** Verify `nx report` shows NX version.
 
-#### tsconfig.json
+### Phase 3: Install Dependencies
 
+Add testing and code quality tools:
+
+```bash
+# Add NX plugins
+nx add @nx/vitest
+nx add @nx/eslint
+nx add @nx/node  # Required for creating applications
+
+# Install testing dependencies
+pnpm add -D vitest @vitest/coverage-v8
+
+# Install ESLint dependencies (required for strict config)
+pnpm add -D typescript-eslint @nx/eslint-plugin eslint-plugin-functional
+
+# Install git hooks
+pnpm add -D husky lint-staged
+```
+
+Adding `@nx/vitest`. Provides integrated test runner with coverage reporting.
+
+Adding `@nx/eslint`. Provides consistent linting across all projects.
+
+Adding `@nx/node`. Required for creating Node.js applications.
+
+Adding `husky` and `lint-staged`. Provides pre-commit verification gate.
+
+### Phase 4: Create Initial Projects
+
+**If user specified packages in Phase 1, create them:**
+
+```bash
+# For each package (publishable library with vitest)
+nx g @nx/js:library packages/[pkg-name] --publishable --importPath=@[workspace-name]/[pkg-name] --bundler=tsc --unitTestRunner=vitest
+```
+
+**If user specified apps in Phase 1, create them:**
+
+```bash
+# For each app (node application - vitest NOT supported, use none)
+nx g @nx/node:application apps/[app-name] --unitTestRunner=none
+```
+
+🚨 **IMPORTANT:**
+- `@nx/js:library` supports `--unitTestRunner=vitest`
+- `@nx/node:application` only supports `--unitTestRunner=jest|none` (NOT vitest)
+
+After creating projects, run `nx sync` to update TypeScript project references.
+
+### Phase 5: Add Claude Code Integration
+
+Copy template files (only what NX can't create):
+
+**Claude Code Integration:**
+
+```bash
+cp -r [claude-skillz-path]/typescript-backend-project-setup/template/CLAUDE.md [target-directory]/
+cp -r [claude-skillz-path]/typescript-backend-project-setup/template/AGENTS.md [target-directory]/
+cp -r [claude-skillz-path]/typescript-backend-project-setup/template/.claude [target-directory]/
+```
+
+Adding `CLAUDE.md`. Provides AI context, commands, and project conventions.
+
+Adding `.claude/settings.json`. Provides permission guardrails and hook configuration.
+
+Adding `.claude/hooks/block-dangerous-commands.sh`. Prevents destructive git operations (--force, --hard, --no-verify).
+
+**Documentation Structure:**
+
+```bash
+cp -r [claude-skillz-path]/typescript-backend-project-setup/template/docs [target-directory]/
+cp [claude-skillz-path]/typescript-backend-project-setup/template/repository-setup-checklist.md [target-directory]/
+```
+
+Adding `docs/conventions/`. Provides coding standards and workflow documentation.
+
+Adding `docs/architecture/`. Provides system design and domain terminology templates.
+
+Adding `docs/project/`. Provides project vision and planning templates.
+
+**Git Hooks:**
+
+```bash
+cp -r [claude-skillz-path]/typescript-backend-project-setup/template/.husky [target-directory]/
+```
+
+Adding `.husky/pre-commit`. Provides pre-commit verification (lint, typecheck, test).
+
+**Custom ESLint Rules:**
+
+```bash
+cp -r [claude-skillz-path]/typescript-backend-project-setup/template/.eslint-rules [target-directory]/
+```
+
+Adding `.eslint-rules/no-generic-names.js`. Custom rule that bans generic names (utils, helpers, service, manager) in filenames and class names.
+
+**Make scripts executable:**
+
+```bash
+chmod +x [target-directory]/.claude/hooks/block-dangerous-commands.sh
+```
+
+**Replace placeholders in copied files:**
+
+| Placeholder | Replace With |
+|-------------|--------------|
+| `{{WORKSPACE_NAME}}` | User's workspace name |
+| `{{WORKSPACE_DESCRIPTION}}` | User's domain description |
+| `{{DOMAIN_NAME}}` | User's workspace name (used as context name in glossary) |
+| `{{DOMAIN_DESCRIPTION}}` | User's domain description |
+
+Files with placeholders:
+- `CLAUDE.md`
+- `docs/conventions/codebase-structure.md`
+- `docs/architecture/domain-terminology/contextive/definitions.glossary.yml`
+- `docs/project/project-overview.md`
+
+### Phase 6: Enforce Strict Standards
+
+These patches add our strict standards to NX-generated configs.
+
+**Patch nx.json - Add lint dependency to build/test:**
+
+Add to `targetDefaults.build.dependsOn`:
+```json
+"dependsOn": ["lint", "^build"]
+```
+
+Add to `targetDefaults.test`:
+```json
+"dependsOn": ["lint"]
+```
+
+This ensures AI gets immediate lint feedback on any change.
+
+**Patch tsconfig.base.json - Add strict TypeScript flags:**
+
+Add these to `compilerOptions`:
 ```json
 {
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "noFallthroughCasesInSwitch": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "exactOptionalPropertyTypes": true,
-    "verbatimModuleSyntax": true,
-    "skipLibCheck": true,
-    "outDir": "./dist",
-    "rootDir": "./src"
-  },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "noUncheckedIndexedAccess": true,
+  "noImplicitOverride": true,
+  "noFallthroughCasesInSwitch": true,
+  "noPropertyAccessFromIndexSignature": true,
+  "noUnusedLocals": true,
+  "noUnusedParameters": true,
+  "noImplicitReturns": true,
+  "exactOptionalPropertyTypes": true,
+  "verbatimModuleSyntax": true
 }
 ```
 
-Optimized for maximum strictness as guardrails for AI. Every flag that catches bugs at compile time is enabled. If you can make it stricter, do so.
+**Patch eslint.config.mjs - Add strict rules:**
 
----
-
-#### eslint.config.mjs
+**IMPORTANT:** Completely overwrite `eslint.config.mjs` with this exact content (do not merge, do not patch - replace the entire file):
 
 ```javascript
-import eslint from '@eslint/js';
+import nx from '@nx/eslint-plugin';
 import tseslint from 'typescript-eslint';
-import noComments from 'eslint-plugin-no-comments';
+import noGenericNames from './.eslint-rules/no-generic-names.js';
 
-export default tseslint.config(
-  eslint.configs.recommended,
-  ...tseslint.configs.strictTypeChecked,
-  {
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+const customRules = {
+  plugins: {
+    custom: {
+      rules: {
+        'no-generic-names': noGenericNames,
       },
     },
-    plugins: {
-      'no-comments': noComments,
-    },
+  },
+};
+
+export default tseslint.config(
+  ...nx.configs['flat/base'],
+  ...nx.configs['flat/typescript'],
+  ...nx.configs['flat/javascript'],
+  {
+    ignores: ['**/dist', '**/out-tsc', '**/node_modules', '**/.nx'],
+  },
+  customRules,
+  {
+    files: ['**/*.ts', '**/*.tsx'],
     rules: {
-      // No comments - code should be self-documenting
-      'no-comments/no-comments': 'error',
+      // Custom rule: no generic names
+      'custom/no-generic-names': 'error',
 
-      // Complexity limits
-      'max-lines': ['error', { max: 400, skipBlankLines: true, skipComments: true }],
-      'max-depth': ['error', 3],
-      'complexity': ['error', 12],
-      'no-else-return': ['error', { allowElseIf: false }],
+      // No comments - forces self-documenting code
+      'no-warning-comments': 'off',
+      'multiline-comment-style': 'off',
+      'capitalized-comments': 'off',
+      'no-inline-comments': 'error',
+      'spaced-comment': 'off',
 
-      // TypeScript strictness - no escape hatches
-      '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-unused-vars': 'error',
-      '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'never' }],
-      '@typescript-eslint/naming-convention': [
-        'error',
-        { selector: 'variable', format: ['camelCase'] },
-        { selector: 'function', format: ['camelCase'] },
-        { selector: 'parameter', format: ['camelCase'] },
-        { selector: 'classProperty', format: ['camelCase'] },
-        { selector: 'classMethod', format: ['camelCase'] },
-        { selector: 'typeLike', format: ['PascalCase'] },
-        { selector: 'enumMember', format: ['PascalCase'] },
-      ],
-
-      // Forbidden patterns
+      // Ban let - use const only
       'no-restricted-syntax': [
         'error',
         {
           selector: 'VariableDeclaration[kind="let"]',
           message: 'Use const. Avoid mutation.',
         },
-        {
-          selector: 'TSAsExpression',
-          message: 'Type assertions are not allowed. Fix the types instead.',
-        },
-        {
-          selector: 'LogicalExpression[operator="||"][right.type!="Identifier"]',
-          message: 'Avoid || for fallbacks. Use explicit conditionals or fail fast.',
-        },
-        {
-          selector: 'ImportExpression',
-          message: 'Dynamic imports are not allowed. Use static imports.',
-        },
-        {
-          selector: 'CatchClause:not([param])',
-          message: 'Catch clause must define a variable to capture the error.',
-        },
       ],
+      'prefer-const': 'error',
+      'no-var': 'error',
 
-      // No generic folder names in imports
+      // No any types
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unsafe-assignment': 'error',
+      '@typescript-eslint/no-unsafe-member-access': 'error',
+      '@typescript-eslint/no-unsafe-call': 'error',
+      '@typescript-eslint/no-unsafe-return': 'error',
+
+      // No type assertions - fix the types instead
+      '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'never' }],
+
+      // Ban generic folder imports
       'no-restricted-imports': [
         'error',
         {
@@ -226,566 +301,165 @@ export default tseslint.config(
           ],
         },
       ],
+
+      // Complexity limits
+      'max-lines': ['error', { max: 400, skipBlankLines: true, skipComments: true }],
+      'max-depth': ['error', 3],
+      'complexity': ['error', 12],
+
+      // Naming conventions
+      '@typescript-eslint/naming-convention': [
+        'error',
+        {
+          selector: 'variable',
+          format: ['camelCase'],
+        },
+        {
+          selector: 'variable',
+          modifiers: ['const'],
+          format: ['camelCase', 'UPPER_CASE'],
+        },
+        {
+          selector: 'function',
+          format: ['camelCase'],
+        },
+        {
+          selector: 'parameter',
+          format: ['camelCase'],
+          leadingUnderscore: 'allow',
+        },
+        {
+          selector: 'typeLike',
+          format: ['PascalCase'],
+        },
+        {
+          selector: 'enumMember',
+          format: ['PascalCase'],
+        },
+        {
+          selector: 'objectLiteralProperty',
+          format: null,
+        },
+      ],
     },
   },
   {
-    ignores: ['dist/', 'node_modules/', 'coverage/', '*.config.*'],
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
   }
 );
 ```
 
-Optimized for maximum type safety and guards against common AI anti-patterns.
+This enforces:
+- **No generic names** - Custom rule bans utils, helpers, service, manager, etc. in filenames and class names
+- **No `let`** - Only `const` allowed via no-restricted-syntax
+- **No type assertions** - Fix the types, don't cast
+- **No generic folders** - Bans imports from utils/, helpers/, common/, shared/, core/, lib/
+- **Complexity limits** - Max 400 lines, max depth 3, cyclomatic complexity 12
+- **No inline comments** - Forces self-documenting code
+- **No `any` types** - Anywhere
+- **Naming conventions** - camelCase for variables/functions, PascalCase for types
 
----
+**Patch package.json - Add scripts:**
 
-#### vitest.config.ts
-
-```typescript
-import { defineConfig } from 'vitest/config';
-
-export default defineConfig({
-  test: {
-    globals: true,
-    environment: 'node',
-    include: ['src/**/*.test.ts'],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: ['**/*.test.ts', '**/index.ts'],
-      thresholds: {
-        statements: 100,
-        branches: 100,
-        functions: 100,
-        lines: 100,
-      },
-    },
-  },
-});
-```
-
-Strive for 100% coverage as the default. Reduce if needed or exclude specific files.
-
-**Examples:**
-
-Exclude generated files:
-```typescript
-exclude: ['**/*.test.ts', '**/index.ts', '**/generated/**']
-```
-
-Different thresholds for specific paths:
-```typescript
-thresholds: {
-  'src/domain/**': { statements: 100, branches: 100, functions: 100, lines: 100 },
-  'src/infra/**': { statements: 80, branches: 80, functions: 80, lines: 80 },
-}
-```
-
----
-
-#### .gitignore
-
-```
-# Dependencies
-node_modules/
-
-# Build outputs
-dist/
-build/
-*.tsbuildinfo
-
-# Test & coverage
-coverage/
-
-# Environment
-.env
-.env.*
-!.env.example
-
-# Logs
-*.log
-npm-debug.log*
-
-# IDE
-.idea/
-.vscode/
-*.swp
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Caches
-.eslintcache
-.parcel-cache/
-```
-
----
-
-### Phase 4: Claude Code Integration
-
-#### CLAUDE.md
-
-````markdown
-# [Project Name]
-
-[Short description - what it does, the problem it solves]
-
-Before starting any task, read `docs/project/project-overview.md`.
-
-## Architecture
-
-- **[Domain Name]** - [Brief description of what it does]
-- **infra** - Shared adapters for [services]
-
-Key documents:
-- `docs/architecture/overview.md` - System design
-- `docs/architecture/domain-terminology/contextive/definitions.glossary.yml`
-- `docs/architecture/adr/` - Decision records
-
-All code must follow `docs/conventions/codebase-structure.md`.
-
-Use domain terminology from the contextive definitions. Do not invent new terms or use technical jargon when domain terminology exists.
-
-When discussing domain concepts, clarify terminology with the user. Add new terms to `docs/architecture/domain-terminology/contextive/definitions.glossary.yml`.
-
-## Commands
-
-Build: `npm run build`
-Test: `npm run test`
-Lint: `npm run lint`
-Verify (full gate): `npm run verify`
-
-Run single test file:
-```bash
-npx vitest run src/[feature]/domain/[file].test.ts
-```
-
-Run tests matching pattern:
-```bash
-npx vitest run -t "should validate"
-```
-
-## Task Workflow
-
-Follow `docs/conventions/task-workflow.md` for all task management.
-
-## Testing
-
-Follow `docs/conventions/testing.md`.
-
-## Code Conventions
-
-Follow `docs/conventions/software-design.md`.
-
-## Security
-
-- Never commit secrets, API keys, or credentials
-- Use environment variables for sensitive configuration
-- Do not log sensitive data (passwords, tokens, PII)
-- Validate and sanitize all external input
-
-## Tools
-
-Installed from `ntcoding/claude-skillz`:
-
-**Skills:**
-- `writing-tests` - Test naming, assertions, edge case checklists
-- `software-design-principles` - Object calisthenics, fail-fast, dependency inversion
-
-**Plugins:**
-- `task-check` - Validates task completion before marking done
-- `automatic-code-review` - Reviews code on session stop
-
-## General Guidelines
-
-- **Do not modify eslint, tsconfig, or vitest configuration.** If you believe a change is genuinely necessary, provide the suggested changes and ask the user to modify these files.
-- **Do not use `--no-verify`, `--force`, or `--hard` flags.** These are blocked by hooks and will fail. All commits must pass the `verify` gate.
-````
-
-**Why this structure:**
-- **Standard sections** - Grouped by concern. Conventions can be built around this structure.
-- **Disclosure pattern** - Makes implicit knowledge explicit. What to read, where conventions live, what tools exist, what's forbidden. No tribal knowledge.
-- **References over duplication** - Points to convention docs. Single source of truth.
-
----
-
-#### AGENTS.md
-
-```markdown
-# AGENTS.md
-
-Read and follow all instructions in `CLAUDE.md`.
-```
-
----
-
-#### .claude/settings.json
-
+Add these scripts to the root package.json:
 ```json
 {
-  "permissions": {
-    "deny": [
-      "Edit(./tsconfig.json)",
-      "Edit(./eslint.config.mjs)",
-      "Edit(./vitest.config.ts)",
-      "Edit(./.claude/settings.json)",
-      "Read(./.env)",
-      "Read(./.env.*)"
-    ]
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [{
-          "type": "command",
-          "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/block-dangerous-commands.sh"
-        }]
-      }
-    ]
-  },
-  "enabledPlugins": {
-    "task-check@claude-skillz": true,
-    "automatic-code-review@claude-skillz": true,
-    "development-skills@claude-skillz": true
+  "scripts": {
+    "build": "nx run-many -t build",
+    "test": "nx run-many -t test",
+    "lint": "nx run-many -t lint",
+    "typecheck": "nx run-many -t typecheck",
+    "verify": "nx run-many -t lint,typecheck && nx run-many -t test --coverage",
+    "prepare": "husky"
   }
 }
 ```
 
-**Why these settings:**
-- `permissions.deny` - AI cannot modify the quality gate configs (tsconfig, eslint, vitest) or read secrets. These are hard blocks, not suggestions.
-- `hooks.PreToolUse` - Inspects every bash command before execution. Blocks dangerous patterns. See hook script below.
+### Phase 7: Establish Coding Conventions
 
----
+Copy content from claude-skillz skills to the docs:
 
-#### .claude/hooks/block-dangerous-commands.sh
+**Testing conventions:**
+- Read: `[claude-skillz-path]/writing-tests/SKILL.md`
+- Write to: `docs/conventions/testing.md`
+
+Adding `docs/conventions/testing.md`. Provides test naming, assertion patterns, and edge case checklists.
+
+**Software design conventions:**
+- Read: `[claude-skillz-path]/software-design-principles/SKILL.md`
+- Write to: `docs/conventions/software-design.md`
+
+Adding `docs/conventions/software-design.md`. Provides object calisthenics, fail-fast, and dependency inversion patterns.
+
+### Phase 8: Activate Git Hooks
+
+Initialize husky, then overwrite the default pre-commit with our version:
 
 ```bash
-#!/bin/bash
-read -r input
-command=$(echo "$input" | jq -r '.tool_input.command // ""')
-
-# Block commands that bypass safety checks
-if echo "$command" | grep -qE '(--no-verify|--force|-f\s|--hard)'; then
-  echo "Blocked: This command bypasses safety checks (--no-verify, --force, --hard)" >&2
-  exit 2
-fi
-
-exit 0
-```
-
-Make it executable: `chmod +x .claude/hooks/block-dangerous-commands.sh`
-
-**Why this hook:**
-- `--no-verify` bypasses git hooks - AI could skip the verify gate
-- `--force` / `-f` on push overwrites remote history
-- `--hard` on reset destroys uncommitted work
-
-Pre-commit runs `verify`. This hook ensures AI can't bypass it. Instructions in CLAUDE.md are requests. This hook is enforcement.
-
----
-
-### Phase 5: Documentation Structure
-
-Create the docs folder structure:
-
-```
-docs/
-├── conventions/
-│   ├── codebase-structure.md
-│   ├── task-workflow.md
-│   ├── testing.md
-│   └── software-design.md
-├── architecture/
-│   ├── overview.md
-│   ├── adr/
-│   └── domain-terminology/
-│       └── contextive/
-│           └── definitions.glossary.yml
-└── project/
-    ├── project-overview.md
-    └── PRD/
-```
-
----
-
-#### docs/conventions/codebase-structure.md
-
-````markdown
-# Codebase Structure
-
-## Directory Layout
-
-```
-src/
-├── <feature>/
-│   ├── domain/       # Domain model only. No dependencies on other layers.
-│   ├── application/  # Use cases. Orchestrates domain.
-│   ├── infra/        # Database, external services, frameworks.
-│   └── api/          # Controllers, endpoints (often separate project).
-└── infra/            # Shared: client libs, adapters
-```
-
-## Principles
-
-**Feature-first, layer-second.** Group by business capability, then by architectural layer.
-
-**Dependencies point inward.** Domain depends on nothing. Application depends on domain. Infra depends on application and domain.
-
-**No generic folders.** Every folder has domain meaning. Forbidden: `utils/`, `helpers/`, `common/`, `shared/`, `core/`, `lib/`.
-
-**API layer is often separate.** For microservices, API may be its own project that imports domain/application.
-
-## Layer Responsibilities
-
-| Layer | Contains | Depends On |
-|-------|----------|------------|
-| domain | Entities, value objects, domain services, domain events | Nothing |
-| application | Use cases, application services, DTOs | domain |
-| infra | Repositories, external clients, framework adapters | domain, application |
-| api | Controllers, routes, request/response mapping | application |
-
-## Shared Infrastructure
-
-`src/infra/` contains shared adapters used across features:
-- Database clients
-- Message queue adapters
-- External API clients
-- Logging, monitoring
-
-These are technical infrastructure, not business logic.
-````
-
----
-
-#### docs/conventions/task-workflow.md
-
-```markdown
-# Task Workflow
-
-Choose an approach that fits your project:
-
-## Taskmaster AI
-
-Full-featured task management with AI integration.
-- Structured task breakdown and tracking
-- Good for larger projects with multiple contributors
-
-## Lightweight Task Workflow
-
-https://github.com/NTCoding/claude-skillz/tree/main/lightweight-task-workflow
-
-Simple markdown-based session state.
-- Lower overhead for smaller projects
-- Tasks tracked in `.claude/session.md`
-
-## Beads
-
-https://github.com/steveyegge/beads
-
-Git-backed task tracking for AI agents.
-- Tasks stored as JSONL in `.beads/`
-- Dependency tracking with hash-based IDs
-- Good for multi-agent or long-horizon work
-```
-
----
-
-#### docs/conventions/testing.md
-
-Copy content from `writing-tests/SKILL.md` in the claude-skillz repository. This includes:
-- Test naming conventions ("outcome when condition")
-- Assertion best practices (specific values, match titles)
-- Edge case checklists (numbers, strings, collections, dates, null/undefined, domain-specific)
-- Bug clustering principles
-
----
-
-#### docs/conventions/software-design.md
-
-Copy content from `software-design-principles/SKILL.md` in the claude-skillz repository. This includes:
-- Object calisthenics rules
-- Fail-fast error handling
-- Dependency inversion
-- Feature envy detection
-- Intention-revealing names
-
----
-
-#### docs/architecture/overview.md
-
-```markdown
-# Architecture Overview
-
-## C4 Context
-
-[Draw a simple sketch diagram showing the system in its environment]
-
-- What systems does this interact with?
-- Who are the users?
-- What are the main data flows?
-
-## C4 Containers
-
-[Draw a simple sketch diagram showing high-level technical building blocks]
-
-- What are the main deployable units?
-- How do they communicate?
-- What technologies are used?
-
-## External Dependencies
-
-[List external services, APIs, third-party systems]
-
-- Service name: purpose, criticality, owner
-
-## Legacy Systems
-
-[Any legacy systems this interacts with or replaces]
-
-- What are we migrating from?
-- What integration points exist?
-
-## Known Tech Debt & Migrations
-
-[Current tech debt, planned migrations, known issues]
-
-- Issue: impact, planned resolution
-```
-
----
-
-#### docs/architecture/domain-terminology/contextive/definitions.glossary.yml
-
-```yaml
-contexts:
-  - name: [DomainName]
-    domainVisionStatement: [Purpose of this domain]
-    terms:
-      - name: [Term]
-        definition: [Clear definition in domain language]
-```
-
----
-
-#### docs/project/project-overview.md
-
-```markdown
-# [Project Name] - Project Overview
-
-## Vision
-
-[One sentence - what success looks like]
-
-## Problem Statement
-
-[What problem are we solving? Why does it matter?]
-
-## Users
-
-[Who uses this? What are their needs and pain points?]
-
-## Solution
-
-[How do we solve the problem? High-level approach]
-
-## Guiding Principles
-
-[Non-negotiables, technical constraints, philosophy]
-
-- Principle 1: explanation
-- Principle 2: explanation
-
-## Project Phases
-
-### Phase 1: [Name]
-
-**Goal:** [What we're trying to achieve]
-
-**Deliverables:**
-- Deliverable 1
-- Deliverable 2
-
-**Success Criteria:**
-- How we know this phase succeeded
-
-### Phase 2: [Name]
-
-[Same structure]
-
-## Success Metrics
-
-[How we measure overall project success]
-
-## Related Documentation
-
-- [Link to PRDs, architecture docs, etc.]
-```
-
----
-
-### Phase 6: Git Hooks
-
-#### .husky/pre-commit
-
-```bash
-npx lint-staged && npm run verify
-```
-
-Run these commands to set up husky:
-```bash
-npm install
+cd [target-directory]
 npx husky init
-echo "npx lint-staged && npm run verify" > .husky/pre-commit
+# husky init creates a default pre-commit - overwrite it with ours:
+cp [claude-skillz-path]/typescript-backend-project-setup/template/.husky/pre-commit .husky/pre-commit
 ```
 
----
+### Phase 9: Verify Setup
 
-### Phase 7: Verification
+```bash
+# Check NX is working
+nx report
 
-After creating all files:
+# View empty workspace
+nx graph
+```
 
-1. Run `npm install`
-2. Run `npm run lint` - should pass (no source files yet)
-3. Run `npm run typecheck` - should pass
-4. Run `npm run test` - should pass (no tests yet)
-5. Verify all checklist items are checked
+Review the `repository-setup-checklist.md` and ensure all items are checked.
 
----
+**Checkpoint:** All verification commands pass. Ready for first commit.
 
-### Phase 8: Content Interview (Optional)
+### Phase 10: Document Architecture (Optional)
 
-Offer to interview the user to build content for:
+Offer to interview the user to fill in placeholder content:
 
-1. **Architecture Overview**
-   - "What systems does this interact with?"
-   - "Who are the primary users?"
-   - "What are the main technical components?"
-   - Draw C4 Context and Container diagrams based on answers
+**Architecture Overview** (`docs/architecture/overview.md`):
+- "What systems does this interact with?"
+- "Who are the primary users?"
+- "What are the main technical components?"
 
-2. **Domain Terminology**
-   - "What are the key terms in this domain?"
-   - "How would you define [term] to a new team member?"
-   - Add to contextive definitions.glossary.yml
+**Domain Terminology** (`docs/architecture/domain-terminology/contextive/definitions.glossary.yml`):
+- "What are the key terms in this domain?"
+- "How would you define [term] to a new team member?"
 
-3. **Project Overview**
-   - "What problem are you solving?"
-   - "Who are the users and what do they need?"
-   - "What are your non-negotiable principles?"
-   - "What are the project phases?"
-   - Build project-overview.md from answers
+**Project Overview** (`docs/project/project-overview.md`):
+- "What problem are you solving?"
+- "Who are the users and what do they need?"
+- "What are your non-negotiable principles?"
+- "What are the project phases?"
 
 ---
 
 ## Summary
 
-This skill creates a TypeScript backend project with:
+This skill creates an NX monorepo using a command-first approach:
 
-- **Maximum type safety** - strict tsconfig, no escape hatches
-- **Strict linting** - no comments, no generic folders, no mutation
-- **100% test coverage** - enforced thresholds
-- **AI-optimized structure** - CLAUDE.md, domain terminology, clear conventions
-- **Protected configuration** - AI cannot modify quality rules
-- **Progress tracking** - checklist for resuming setup
+1. `create-nx-workspace` for foundation
+2. `nx add` for plugins
+3. `pnpm add` for dependencies
+4. Copy template files (only what NX can't create)
+5. Patch configs (last resort)
+6. Verify setup
 
-The goal: a codebase where AI gets immediate, specific feedback on every iteration, reducing bugs and accelerating development.
+The result provides:
+- **Maximum type safety** - strict tsconfig, TypeScript project references
+- **Strict linting** - no comments, naming conventions, no mutation
+- **100% test coverage** - with sensible excludes
+- **NX orchestration** - caching, affected commands, dependency graph
+- **AI guardrails** - protected configs, blocked dangerous commands
+- **Scalable structure** - apps and packages pattern with workspace:* dependencies
+
+For adding projects after setup, see `docs/conventions/codebase-structure.md`.

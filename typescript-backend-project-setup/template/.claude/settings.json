@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit(./tsconfig.base.json)",
+      "Edit(./tsconfig.json)",
+      "Edit(./eslint.config.mjs)",
+      "Edit(./nx.json)",
+      "Edit(./.claude/settings.json)",
+      "Edit(./.husky/*)",
+      "Edit(./pnpm-workspace.yaml)",
+      "Edit(./.gitignore)",
+      "Edit(./.claude/hooks/*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./apps/**/.env)",
+      "Read(./apps/**/.env.*)",
+      "Read(./packages/**/.env)",
+      "Read(./packages/**/.env.*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [{
+          "type": "command",
+          "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/block-dangerous-commands.sh"
+        }]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "task-check@claude-skillz": true,
+    "automatic-code-review@claude-skillz": true,
+    "development-skills@claude-skillz": true
+  }
+}

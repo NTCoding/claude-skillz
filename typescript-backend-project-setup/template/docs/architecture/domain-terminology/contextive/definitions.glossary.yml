@@ -1,0 +1,6 @@
+contexts:
+  - name: {{DOMAIN_NAME}}
+    domainVisionStatement: {{DOMAIN_DESCRIPTION}}
+    terms:
+      - name: ExampleTerm
+        definition: Replace with actual domain terms and definitions
