@@ -46,7 +46,7 @@
       "name": "development-skills",
       "source": "./",
       "description": "Random skills for various software development tasks",
-      "version": "2.0.7",
+      "version": "2.0.8",
       "category": "development",
       "keywords": ["tdd", "design", "workflow", "personality", "project-setup"],
       "skills": [

@@ -1,7 +1,7 @@
 ---
 name: NX Monorepo TypeScript Backend Project Setup
 description: "Sets up NX monorepo for TypeScript backend projects optimized for AI-assisted development. Delegates to NX commands where possible, patches configs as last resort. Triggers on: 'set up typescript backend project', 'create backend project', 'initialize typescript backend', 'create monorepo', or when working in an empty project folder."
-version: 3.0.7
+version: 3.0.8
 ---
 
 # NX Monorepo TypeScript Backend Project Setup
@@ -294,7 +294,7 @@ export default tseslint.config(
       // No type assertions - fix the types instead
       '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'never' }],
 
-      // Ban generic folder imports
+      // Ban generic folder imports (not lib - that's NX convention)
       'no-restricted-imports': [
         'error',
         {
@@ -304,7 +304,6 @@ export default tseslint.config(
             { group: ['*/common/*', '*/common'], message: 'No common folders. Use domain-specific names.' },
             { group: ['*/shared/*', '*/shared'], message: 'No shared folders. Use domain-specific names.' },
             { group: ['*/core/*', '*/core'], message: 'No core folders. Use domain-specific names.' },
-            { group: ['*/lib/*', '*/lib'], message: 'No lib folders. Use domain-specific names.' },
           ],
         },
       ],
@@ -366,7 +365,7 @@ This enforces:
 - **No generic names** - Custom rule bans utils, helpers, service, manager, etc. in filenames and class names
 - **No `let`** - Only `const` allowed via no-restricted-syntax
 - **No type assertions** - Fix the types, don't cast
-- **No generic folders** - Bans imports from utils/, helpers/, common/, shared/, core/, lib/
+- **No generic folders** - Bans imports from utils/, helpers/, common/, shared/, core/
 - **Complexity limits** - Max 400 lines, max depth 3, cyclomatic complexity 12
 - **No inline comments** - Forces self-documenting code
 - **No `any` types** - Anywhere
