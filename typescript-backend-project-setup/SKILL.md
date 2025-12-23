@@ -1,7 +1,7 @@
 ---
 name: NX Monorepo TypeScript Backend Project Setup
 description: "Sets up NX monorepo for TypeScript backend projects optimized for AI-assisted development. Delegates to NX commands where possible, patches configs as last resort. Triggers on: 'set up typescript backend project', 'create backend project', 'initialize typescript backend', 'create monorepo', or when working in an empty project folder."
-version: 3.0.3
+version: 3.0.7
 ---
 
 # NX Monorepo TypeScript Backend Project Setup
@@ -70,6 +70,13 @@ This creates:
 - `package.json` - Root package with NX scripts
 - `pnpm-workspace.yaml` - Workspace definition
 - `.gitignore` - Standard ignores
+
+**Patch .gitignore - Add test-output:**
+
+Add `test-output` to `.gitignore` (vitest coverage output):
+```
+test-output
+```
 
 **Checkpoint:** Verify `nx report` shows NX version.
 
@@ -250,7 +257,7 @@ export default tseslint.config(
   ...nx.configs['flat/typescript'],
   ...nx.configs['flat/javascript'],
   {
-    ignores: ['**/dist', '**/out-tsc', '**/node_modules', '**/.nx'],
+    ignores: ['**/dist', '**/out-tsc', '**/node_modules', '**/.nx', '*.config.ts', '*.config.mjs', '*.config.js', 'vitest.workspace.ts'],
   },
   customRules,
   {
@@ -365,9 +372,9 @@ This enforces:
 - **No `any` types** - Anywhere
 - **Naming conventions** - camelCase for variables/functions, PascalCase for types
 
-**Patch package.json - Add scripts:**
+**Patch package.json - Add scripts and lint-staged:**
 
-Add these scripts to the root package.json:
+Add these to the root package.json:
 ```json
 {
   "scripts": {
@@ -377,6 +384,9 @@ Add these scripts to the root package.json:
     "typecheck": "nx run-many -t typecheck",
     "verify": "nx run-many -t lint,typecheck && nx run-many -t test --coverage",
     "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.ts": ["eslint --fix"]
   }
 }
 ```
