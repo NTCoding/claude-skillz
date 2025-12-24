@@ -1,7 +1,7 @@
 ---
 name: NX Monorepo TypeScript Backend Project Setup
 description: "Sets up NX monorepo for TypeScript backend projects optimized for AI-assisted development. Delegates to NX commands where possible, patches configs as last resort. Triggers on: 'set up typescript backend project', 'create backend project', 'initialize typescript backend', 'create monorepo', or when working in an empty project folder."
-version: 3.0.8
+version: 3.0.9
 ---
 
 # NX Monorepo TypeScript Backend Project Setup
@@ -390,6 +390,25 @@ Add these to the root package.json:
 }
 ```
 
+**Patch vitest.config.mts files - Add 100% coverage thresholds:**
+
+For EACH project created in Phase 4 that has a `vitest.config.mts`, add thresholds to the coverage block:
+
+```typescript
+coverage: {
+  reportsDirectory: './test-output/vitest/coverage',
+  provider: 'v8' as const,
+  thresholds: {
+    lines: 100,
+    statements: 100,
+    functions: 100,
+    branches: 100,
+  },
+},
+```
+
+This enforces 100% test coverage - tests will FAIL if coverage drops below 100%.
+
 ### Phase 7: Establish Coding Conventions
 
 Copy content from claude-skillz skills to the docs:
@@ -472,3 +491,64 @@ The result provides:
 - **Scalable structure** - apps and packages pattern with workspace:* dependencies
 
 For adding projects after setup, see `docs/conventions/codebase-structure.md`.
+
+---
+
+## Verification Mode
+
+Trigger: "verify typescript setup", "check project setup", "audit monorepo config"
+
+Use this to verify an existing repo has all required configurations.
+
+### Step 1: Discover all projects
+
+```bash
+find . -name "package.json" -not -path "*/node_modules/*" -not -path "*/.nx/*"
+```
+
+### Step 2: ESLint Config Verification
+
+Read `eslint.config.mjs` and verify it contains:
+- [ ] Import of `.eslint-rules/no-generic-names.js`
+- [ ] Rule `custom/no-generic-names: 'error'`
+- [ ] Rule `no-restricted-syntax` with `VariableDeclaration[kind="let"]` selector
+- [ ] Rule `@typescript-eslint/consistent-type-assertions` with `assertionStyle: 'never'`
+- [ ] Rule `no-restricted-imports` with patterns for utils, helpers, common, shared, core
+- [ ] Rules `max-lines: 400`, `max-depth: 3`, `complexity: 12`
+
+**If any missing:** List what's missing and offer to fix.
+
+### Step 3: Vitest Config Verification
+
+For EACH project discovered in Step 1:
+1. Check if `vitest.config.mts` exists in that project directory
+2. If exists, read it and verify `coverage.thresholds` contains:
+   - `lines: 100`
+   - `statements: 100`
+   - `functions: 100`
+   - `branches: 100`
+
+**If any project missing thresholds:** List which projects are non-compliant and offer to fix.
+
+### Step 4: Git Hooks Verification
+
+- [ ] `.husky/pre-commit` contains `lint-staged` and `verify`
+- [ ] `package.json` has `lint-staged` config
+
+### Step 5: Gitignore Verification
+
+- [ ] `.gitignore` contains `test-output` on its own line
+
+### Step 6: Report
+
+Output a summary:
+```
+✓ ESLint: All rules configured
+✗ Vitest: 2/6 projects missing coverage thresholds
+  - apps/eclair
+  - apps/docs
+✓ Git Hooks: Configured
+✓ Gitignore: test-output ignored
+```
+
+**If failures:** Offer to fix all issues automatically.

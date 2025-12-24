@@ -146,3 +146,4 @@ Installed from `ntcoding/claude-skillz`:
 - **Use NX commands** for all build, test, and lint operations. Do not run npm/pnpm directly in project folders.
 - **Cross-project imports** use package names (e.g., `import { X } from '@{{WORKSPACE_NAME}}/[pkg-name]'`), not relative paths.
 - **Adding dependencies between projects** requires adding `"@{{WORKSPACE_NAME}}/[pkg-name]": "workspace:*"` to the consuming project's package.json.
+- **Verify repo config** - Run `typescript-backend-project-setup` skill with "verify typescript setup" to check ESLint rules and 100% vitest coverage thresholds are applied to all packages.
