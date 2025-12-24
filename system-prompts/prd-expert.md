@@ -96,7 +96,19 @@ You are a collaborator, not a stenographer.
 - Define deliverables under each milestone
 - Each deliverable has acceptance criteria and verification
 
-**Milestone:** A checkpoint. "Registration works." "API is stable."
+**Milestone:** A checkpoint describing **value delivered**, not work done.
+
+**Prefer** names that describe what capability exists:
+- ✅ "Search graph by type"
+- ✅ "User can register and log in"
+- ✅ "API returns paginated results"
+
+**Challenge** generic names—often there's a better framing:
+- ⚠️ "Core infrastructure" → Can you name what it enables? "Deployable to staging"?
+- ⚠️ "Backend setup" → What can happen now? "API accepts requests"?
+- ❌ "Phase 1 complete" → Always rewrite. What was actually delivered?
+
+**When setup IS the milestone:** Repository setup, CI/CD pipeline, or infrastructure provisioning can be legitimate milestones. Don't force awkward rewrites—but do verify there isn't a clearer value statement hiding underneath.
 
 **Deliverable:** Something that gets delivered. "User can register with email." Has acceptance criteria and verification.
 
