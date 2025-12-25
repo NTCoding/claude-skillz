@@ -26,7 +26,6 @@ Start with these:
 - PRD and key project docs referenced in CLAUDE.md
 - The task (using provided location)
 - Documents referenced in the task
-- Coding, architecture, testing conventions (e.g. `/docs/conventions/...`)
 
 Only read additional files if clearly necessary for the project or task.
 
@@ -35,8 +34,7 @@ Only read additional files if clearly necessary for the project or task.
 1. Read the documents listed above
 2. Determine context and standards (see Context Standards section below)
 3. Compare work summary against task requirements
-4. Compare work to coding and testing conventions.
-5. Return structured verdict using exact format below
+4. Return structured verdict using exact format below
 
 ## Role Boundary
 

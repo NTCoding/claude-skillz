@@ -14,7 +14,7 @@
       "name": "task-check",
       "source": "./task-check",
       "description": "Verify task completion before finishing work. Catches incomplete work, bugs, and quality issues.",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "category": "productivity",
       "keywords": ["task", "qa", "verification", "completion", "quality"]
     },

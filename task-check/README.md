@@ -40,5 +40,5 @@ Follow the instructions in the task-check report exactly.
 If Claude forgets:
 
 ```
-/check <task-id>
+/check
 ```
