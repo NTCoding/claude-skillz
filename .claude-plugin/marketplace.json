@@ -22,7 +22,7 @@
       "name": "automatic-code-review",
       "source": "./automatic-code-review",
       "description": "Automatic code review on session stop with configurable rules",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "category": "development",
       "keywords": ["code-review", "quality", "hooks", "semantic-review"]
     },

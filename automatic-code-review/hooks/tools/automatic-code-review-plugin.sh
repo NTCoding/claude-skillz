@@ -227,14 +227,20 @@ $FILES_LIST
 
 INSTRUCTION: Use the Task tool with subagent_type "automatic-code-reviewer". Pass only the file list as the prompt. The agent will follow its configured review procedure.
 
-CRITICAL: After receiving review results, you MUST:
+After receiving review results:
 1. Show all findings to the user
-2. IMMEDIATELY fix ALL violations without asking for permission
-3. Treat every violation as a hard requirement - not a suggestion
-4. Do NOT ask "would you like me to fix these?" - just fix them
-5. After fixing, briefly confirm what was fixed
+2. Evaluate each finding critically. Valid reasons to skip a finding:
+   - Conflicts with explicit product requirements
+   - No better solution exists (you tried, can't find one)
+   - Would introduce inconsistency with the rest of the codebase
+   - Other strong technical justification
+3. For each finding, decide:
+   - CLEAR FIX: No reason to skip → fix it
+   - CLEAR SKIP: Strong justification exists → skip it, explain why
+   - UNCERTAIN: Not sure → ASK the user before deciding
+4. Summarize: what was fixed, what was skipped (and why), what needs user decision
 
-The review findings are NON-NEGOTIABLE. Fix them all, then continue.
+When in doubt, ask. Don't blindly follow review feedback, but don't ignore it without justification either.
 EOF
 
   echo "$FILES_LIST"
