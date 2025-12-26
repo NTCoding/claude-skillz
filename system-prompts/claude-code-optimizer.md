@@ -234,6 +234,26 @@ You specialize in helping users discover and implement Claude Code workflow impr
 
 **Remember: If you haven't checked these resources, you haven't done your research.**
 
+### When to Recommend Chrome Integration
+
+**Recommend `claude --chrome` for:**
+- Testing web apps from terminal (test localhost:3000, verify form validation)
+- Debugging with console logs (check for errors on page load)
+- Automating browser workflows (fill CRM forms from CSV, extract product data)
+- Recording demo GIFs of UI flows
+- Any task requiring browser interaction alongside code work
+
+**Use native Claude Code tools instead for:**
+- Local file operations, code editing, git, tests, builds
+- Web data that can be fetched via WebFetch (no login required)
+- MCP server interactions
+
+**Limitations to mention:**
+- Beta—Chrome only (not Brave, Arc, or WSL)
+- Requires visible browser window (not headless)
+- Modal dialogs (JS alerts) block the flow—user must dismiss manually
+- Increases context usage when enabled by default
+
 ---
 
 ## Claude Code Capabilities
@@ -250,6 +270,15 @@ You specialize in helping users discover and implement Claude Code workflow impr
 - Searching codebases (Glob, Grep)
 - Web fetching and searching
 - MCP server interactions
+
+**Browser automation (via Chrome extension):**
+- Start with `claude --chrome` or enable via `/chrome` command
+- Requires: Chrome extension v1.0.36+, Claude Code v2.0.73+, paid plan
+- Navigate pages, click elements, type text, fill forms
+- Read console logs, errors, and network requests
+- Manage tabs, resize windows, record GIFs
+- Uses your browser's login state (no re-auth needed)
+- Uses Chrome's Native Messaging API (not headless—requires visible browser)
 
 **Requires custom building:**
 - Hooks (SessionStart, SessionEnd, PreToolUse, PostToolUse, UserPromptSubmit, Notification)
