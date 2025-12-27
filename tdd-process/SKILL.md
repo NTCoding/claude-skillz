@@ -193,18 +193,30 @@ Test IS failing. Addressing what the error message demands...
 
       <actions>
         1. Read the error message - what does it literally ask for?
-        2. Implement ONLY what that error message demands
-        3. Do NOT anticipate future errors - address THIS error only
-        4. Run test (use Bash tool to execute test command)
-        5. VERIFY test PASSES (green bar)
-        6. Show exact success message to user (copy/paste verbatim output)
-        7. Run quick compilation check (e.g., tsc --noEmit, or project-specific compile command)
-        8. Run lint on changed code
-        9. If compile/lint fails: Fix issues and return to step 4 (re-run test)
-        10. Show compile/lint success output to user
-        11. Justify why implementation is minimum
-        12. ONLY AFTER completing steps 4-11: Announce post-condition validation
-        13. ONLY AFTER validation passes: Transition to GREEN
+        2. 🚨 MANDATORY SELF-CHECK - announce before implementing:
+           "Minimal implementation check:
+           - Error demands: [what the error literally says]
+           - Could hardcoded value work? [yes/no]
+           - If yes: [what hardcoded value]
+           - If no: [why real logic is required]"
+
+           Guidelines:
+           - If test asserts `x === 5` → return `5`
+           - If test asserts `count === 0` → return object with `count: 0`
+           - If test asserts type → return minimal stub of that type
+           - Only add logic when tests FORCE you to (multiple cases, different inputs)
+        3. Implement ONLY what that error message demands (hardcoded if possible)
+        4. Do NOT anticipate future errors - address THIS error only
+        5. Run test (use Bash tool to execute test command)
+        6. VERIFY test PASSES (green bar)
+        7. Show exact success message to user (copy/paste verbatim output)
+        8. Run quick compilation check (e.g., tsc --noEmit, or project-specific compile command)
+        9. Run lint on changed code
+        10. If compile/lint fails: Fix issues and return to step 5 (re-run test)
+        11. Show compile/lint success output to user
+        12. Justify why implementation is minimum
+        13. ONLY AFTER completing steps 5-12: Announce post-condition validation
+        14. ONLY AFTER validation passes: Transition to GREEN
 
         🚨 YOU CANNOT TRANSITION TO GREEN UNTIL TEST PASSES, CODE COMPILES, AND CODE LINTS 🚨
       </actions>
@@ -485,6 +497,8 @@ Test IS failing. Addressing what the error message demands...
         - Skipped test execution
         - Changed assertion when test failed
         - Changed test assertion to match implementation (instead of fixing implementation)
+        - Implemented full solution when hardcoded value would satisfy error
+        - Skipped mandatory self-check before implementing
       </trigger>
 
       <actions>
@@ -530,6 +544,13 @@ Test IS failing. Addressing what the error message demands...
     - Return wrong value (null, 0, "") to get meaningful assertion failure
     - Hardcode expected value to pass, then add more tests to force real logic
     - Never jump from "not implemented" to full solution
+
+    Concrete example:
+    - Error: "Not implemented"
+    - Test expects: componentCount: 0, linkCount: 0
+    - ❌ WRONG: Implement real resume() with graph parsing logic
+    - ✅ RIGHT: Return hardcoded stub `{ componentCount: 0, linkCount: 0 }`
+    - Then: Add more tests to force real implementation
   </rule>
 
   <rule id="4" title="Predict user response">
