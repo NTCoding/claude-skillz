@@ -521,9 +521,15 @@ Test IS failing. Implementing minimum code to make it pass...
     "Database migration failed" = setup issue, not meaningful failure.
   </rule>
 
-  <rule id="3" title="Minimum implementation only">
-    In RED: implement ONLY what's needed to fix the specific failing test error message. Ask "Which assertion requires this line?"
-    ❌ "I'll implement the whole method" → ✅ "I'll add empty method, re-run, see next failure"
+  <rule id="3" title="Error message driven implementation">
+    Implement ONLY what the error message literally demands.
+    ❌ Method missing → "not implemented" → full solution
+    ✅ Method missing → return wrong value → assertion failure → hardcode correct value → add test → generalize
+
+    Example techniques:
+    - Return wrong value (null, 0, "") to get meaningful assertion failure
+    - Hardcode expected value to pass, then add more tests to force real logic
+    - Never jump from "not implemented" to full solution
   </rule>
 
   <rule id="4" title="Predict user response">
