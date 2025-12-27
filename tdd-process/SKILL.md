@@ -40,7 +40,7 @@ Test output shows: Expected CannotHaveNegativePrice error but received -50
 Test fails correctly. Transitioning to RED.
 
 🔴 TDD: RED
-Test IS failing. Implementing minimum code to make it pass...
+Test IS failing. Addressing what the error message demands...
 ```
 
 **🚨 FAILURE TO ANNOUNCE TDD STATE = SEVERE VIOLATION 🚨**
@@ -173,11 +173,11 @@ Test IS failing. Implementing minimum code to make it pass...
 
     <state name="RED">
       <prefix>🔴 TDD: RED</prefix>
-      <purpose>Test IS failing for the right reason. Implement minimum code to make it pass.</purpose>
+      <purpose>Test IS failing for the right reason. Implement ONLY what the error message demands.</purpose>
 
       🚨 CRITICAL: You are in RED state - test IS CURRENTLY FAILING. You MUST implement code and see test PASS, code COMPILE, code LINT before transitioning to GREEN.
       DO NOT transition to GREEN until you have:
-      1. Implemented minimum code to address the failure
+      1. Implemented ONLY what the error message demands
       2. Executed the test with Bash tool
       3. Seen the SUCCESS output (green bar)
       4. Executed compile check and seen SUCCESS
@@ -192,9 +192,9 @@ Test IS failing. Implementing minimum code to make it pass...
       </pre_conditions>
 
       <actions>
-        1. Analyze failure message from failing test
-        2. Determine MINIMUM change to pass test
-        3. Implement ONLY that minimum change
+        1. Read the error message - what does it literally ask for?
+        2. Implement ONLY what that error message demands
+        3. Do NOT anticipate future errors - address THIS error only
         4. Run test (use Bash tool to execute test command)
         5. VERIFY test PASSES (green bar)
         6. Show exact success message to user (copy/paste verbatim output)
@@ -210,14 +210,14 @@ Test IS failing. Implementing minimum code to make it pass...
       </actions>
 
       <post_conditions>
-        ✓ Minimum code implemented
+        ✓ Implemented ONLY what error message demanded
         ✓ Test executed
         ✓ Test PASSES (green bar - not red)
         ✓ Success message shown to user verbatim
         ✓ Code compiles (no compilation errors)
         ✓ Code lints (no linting errors)
         ✓ Compile/lint output shown to user
-        ✓ Implementation is minimum (justified)
+        ✓ Implementation addresses ONLY what error message demanded (justified)
       </post_conditions>
 
       <validation_before_transition>
@@ -225,14 +225,14 @@ Test IS failing. Implementing minimum code to make it pass...
         ✓ Test PASSES (green bar) - show verbatim output
         ✓ Code compiles - show output
         ✓ Code lints - show output
-        ✓ Implementation is minimum - justify
+        ✓ Implementation addresses ONLY what error demanded - justify
 
         If ANY evidence missing: "⚠️ CANNOT TRANSITION - Missing: [what]" → stay in RED.
       </validation_before_transition>
 
       <critical_rules>
         🚨 NEVER transition to GREEN without test PASS + compile SUCCESS + lint PASS
-        🚨 IMPLEMENT ONLY THE MINIMUM - justify each line against test assertions
+        🚨 IMPLEMENT ONLY WHAT THE ERROR MESSAGE DEMANDS - no anticipating future errors
         🚨 DON'T CHANGE TEST TO MATCH IMPLEMENTATION - fix the code, not the test
       </critical_rules>
 
@@ -569,7 +569,7 @@ Test IS failing. Implementing minimum code to make it pass...
   <critical_reminders>
     🚨 EVERY message: state announcement
     🚨 NEVER skip transitions or claim pass/fail without output
-    🚨 ALWAYS justify minimum implementation
+    🚨 ALWAYS justify: does this address ONLY what error message demanded?
     🚨 NEVER change assertions to make tests pass
     🚨 NEVER guess - find evidence
   </critical_reminders>
