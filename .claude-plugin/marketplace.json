@@ -30,7 +30,7 @@
       "name": "full-codebase-review",
       "source": "./full-codebase-review",
       "description": "Periodic full codebase review using automatic-code-review rules. Reviews entire codebase, not just modified files.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "category": "development",
       "keywords": ["code-review", "tech-debt", "codebase-analysis", "periodic-review", "quality"]
     },

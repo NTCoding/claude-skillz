@@ -41,7 +41,18 @@ The Glob tool respects `.gitignore`, so `node_modules/`, `dist/`, etc. are autom
 
 If `scope_path` is set, use that as the base path for the glob.
 
-Report: "Found X files to review"
+**Categorize files:**
+- Test files: any file matching `*.spec.ts`, `*.spec.tsx`, `*.test.ts`, `*.test.tsx`
+- Production files: all other `.ts`/`.tsx` files
+
+**Store the complete file lists** - these will be included in the report appendix.
+
+Report:
+```
+Found X files to review:
+- Production files: Y
+- Test files: Z
+```
 
 ### Step 3: Chunk Files
 
@@ -94,9 +105,13 @@ Always display a summary to the user:
 ```
 ## Full Codebase Review Complete
 
-**Files reviewed:** X
-**Chunks processed:** Y
-**Total violations found:** Z
+**Files reviewed:**
+- Production files: X
+- Test files: Y
+- Total: Z
+
+**Chunks processed:** N
+**Total violations found:** V
 
 ### By Category:
 - Architecture/Modularity: N
@@ -127,9 +142,11 @@ Report format:
 
 ## Summary
 
-- **Files reviewed:** X
-- **Chunks processed:** Y
-- **Total violations:** Z
+- **Production files reviewed:** X
+- **Test files reviewed:** Y
+- **Total files reviewed:** Z
+- **Chunks processed:** N
+- **Total violations:** V
 - **Review rules:** .claude/automatic-code-review/rules.md
 
 ## Architecture/Modularity Violations
@@ -166,6 +183,30 @@ Based on patterns found in this review:
 
 1. [Suggestion for updating docs/conventions/]
 2. [Another suggestion]
+
+---
+
+## Appendix: Files Reviewed
+
+### Production Files (X)
+
+<details>
+<summary>Click to expand full list</summary>
+
+- path/to/file1.ts
+- path/to/file2.ts
+...
+</details>
+
+### Test Files (Y)
+
+<details>
+<summary>Click to expand full list</summary>
+
+- path/to/file1.spec.ts
+- path/to/file2.test.ts
+...
+</details>
 
 ---
 
