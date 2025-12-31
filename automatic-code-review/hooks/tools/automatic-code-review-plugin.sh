@@ -240,6 +240,9 @@ After receiving review results:
    - "Too much time" / "too complex" → not your call, do the work
    - "Out of scope" → if you touched the code, it's in scope
    - "Inconsistent with existing code" → fix the existing code too
+   - "Pre-existing code" / "didn't write this" → present value/effort, let user decide
+   - "Only renamed/moved" → touching a file puts it in scope
+   - "Would require large refactor" → present value/effort, let user decide
    - Any argument that results in lower quality code
 
 3. For each finding:
