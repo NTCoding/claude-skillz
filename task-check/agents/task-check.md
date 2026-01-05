@@ -2,6 +2,7 @@
 name: task-check
 description: Verify task completion before finishing work. Spawn with task ID, location, and work summary.
 tools: Read
+color: yellow
 ---
 
 # Task Check Agent
