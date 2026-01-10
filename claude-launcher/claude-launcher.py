@@ -27,9 +27,9 @@ GLOBAL_PROMPTS_DIR = Path.home() / ".claude" / "system-prompts"
 DEBUG_OUTPUT = Path("/tmp/claude-launcher-debug.md")
 
 MODELS = {
-    "haik": "haiku",
-    "sonn": "sonnet",
     "opus": "opus",
+    "sonn": "sonnet",
+    "haik": "haiku",
 }
 
 # ============================================================================
