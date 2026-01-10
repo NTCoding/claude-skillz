@@ -390,7 +390,7 @@ def main():
     # Show install hint if rich not available and in interactive mode
     if len(sys.argv) == 1 and not RICH_AVAILABLE:
         print("\n💡 Tip: Install 'rich' for beautifully formatted tables:")
-        print("   pip install rich\n")
+        print("   python3 -m pip install --user rich\n")
 
     personas, names = load_prompts()
 
