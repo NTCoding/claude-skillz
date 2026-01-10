@@ -419,6 +419,18 @@ def main():
         print("Error: No system prompts found", file=sys.stderr)
         sys.exit(1)
 
+    # Show header for interactive mode
+    if len(sys.argv) == 1:
+        print()
+        print("  ╔═══════════════════════════════════════╗")
+        print("  ║                                       ║")
+        print("  ║         CLAUDE LAUNCHER v2.0          ║")
+        print("  ║                                       ║")
+        print("  ║   Select persona & model to start    ║")
+        print("  ║                                       ║")
+        print("  ╚═══════════════════════════════════════╝")
+        print()
+
     # Parse arguments
     if len(sys.argv) > 1:
         # Shortcut mode
