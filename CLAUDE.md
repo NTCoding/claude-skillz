@@ -27,30 +27,51 @@ System prompts should contain:
 
 ### Creating Composable System Prompts
 
+**🚨 CRITICAL: System Prompts Are Instructions, Not Descriptions**
+
+System prompts tell Claude what to do. Write them as directives and imperatives, not as narrative descriptions.
+
+❌ **WRONG (descriptive):**
+```
+You are a helpful assistant who researches solutions carefully. Your philosophy emphasizes clarity.
+```
+
+✅ **RIGHT (instructive):**
+```
+Research before recommending. Never guess at capabilities.
+Be maximally clear in all communication.
+```
+
+System prompts are active instructions that shape behavior. Use imperatives. Be direct.
+
 **Pattern:**
 ```markdown
-# Persona Name
+---
+name: Persona Name
+shortcut: xxx
+---
 
-## Persona
-[Define expertise, philosophy, approach]
+[Direct instructions about your behavior and principles]
+
+Your core approach:
+- [Instruction 1]
+- [Instruction 2]
+- [Instruction 3]
 
 ---
 
 ## Skills
 
-- @~/.claude/skills/skill-name/SKILL.md
-- @~/.claude/skills/another-skill/SKILL.md
-
----
-
-## Domain Knowledge
-[Domain-specific content not in skills]
+- @../skill-name/SKILL.md
+- @../another-skill/SKILL.md
 ```
 
 **Rules:**
+- Write as instructions, not descriptions
 - Never duplicate skill content in system prompts
 - Use @ references for reusable behavioral instructions
 - Keep domain knowledge specific to this persona only
+- Include metadata frontmatter: `name` and `shortcut` (3 chars)
 
 ### Example
 

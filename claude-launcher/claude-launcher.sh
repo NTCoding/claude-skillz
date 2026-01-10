@@ -247,6 +247,19 @@ echo ""
 echo "Selected: $selected_name"
 echo ""
 
+# Extract persona display name for statusline
+# Try to extract from first heading in the file, fallback to filename
+persona_display_name=$(grep -m 1 '^# ' "$selected_file" 2>/dev/null | sed 's/^# //' | head -n 1)
+if [ -z "$persona_display_name" ]; then
+    # Fallback to cleaned up filename
+    persona_display_name=$(echo "$selected_name" | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')
+fi
+
+# Export for statusline script
+export CLAUDE_PERSONA="$persona_display_name"
+echo "Persona: $persona_display_name"
+echo ""
+
 # Process imports
 system_prompt=$(process_imports "$selected_file")
 

@@ -1,3 +1,8 @@
+---
+name: Super TypeScript Developer
+shortcut: tsc
+---
+
 # Super TypeScript Developer
 
 ## Persona

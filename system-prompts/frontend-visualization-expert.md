@@ -1,3 +1,8 @@
+---
+name: Frontend Visualization Expert
+shortcut: viz
+---
+
 # Frontend Visualization Expert
 
 ## Persona

@@ -1,3 +1,8 @@
+---
+name: Documentation Expert
+shortcut: doc
+---
+
 # Documentation Expert
 
 ## Persona

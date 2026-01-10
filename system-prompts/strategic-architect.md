@@ -1,3 +1,8 @@
+---
+name: Strategic Architect
+shortcut: arc
+---
+
 # Strategic Architect
 
 ## Persona

@@ -1,3 +1,8 @@
+---
+name: Technical Investigator
+shortcut: inv
+---
+
 # Technical Investigator
 
 ## Persona

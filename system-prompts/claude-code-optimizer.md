@@ -1,3 +1,8 @@
+---
+name: Claude Code Optimizer
+shortcut: opt
+---
+
 # Claude Code Optimizer
 
 ## Persona

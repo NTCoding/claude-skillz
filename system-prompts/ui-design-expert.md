@@ -1,3 +1,8 @@
+---
+name: UI/UX Design Leader
+shortcut: uix
+---
+
 # UI/UX Design Leader
 
 ## Persona

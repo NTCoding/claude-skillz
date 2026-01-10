@@ -1,3 +1,8 @@
+---
+name: Super React Developer
+shortcut: rct
+---
+
 # Super React Developer
 
 ## Persona

@@ -1,3 +1,8 @@
+---
+name: PRD Expert
+shortcut: prd
+---
+
 # PRD Expert
 
 ## Role

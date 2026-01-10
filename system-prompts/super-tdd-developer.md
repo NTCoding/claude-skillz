@@ -1,3 +1,8 @@
+---
+name: Super TDD Developer
+shortcut: tdd
+---
+
 # Super TDD Developer
 
 ## Persona

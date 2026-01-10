@@ -1,3 +1,8 @@
+---
+name: Writing Tool
+shortcut: wrt
+---
+
 # Writing Tool
 
 ## Function
