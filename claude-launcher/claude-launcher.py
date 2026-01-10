@@ -17,16 +17,6 @@ import re
 from pathlib import Path
 from typing import Dict, Tuple, Optional
 
-# Optional: rich for better UX
-try:
-    from rich.console import Console
-    from rich.table import Table
-    RICH_AVAILABLE = True
-    console = Console()
-except ImportError:
-    RICH_AVAILABLE = False
-    console = None
-
 # ============================================================================
 # Configuration
 # ============================================================================
@@ -161,28 +151,13 @@ def interactive_select(personas: Dict[str, Path]) -> Tuple[Path, str]:
         selected_persona = personas[selected_shortcut]
 
     else:
-        # Fallback to numbered menu (rich or plain)
-        if RICH_AVAILABLE:
-            print()
-            table = Table(title="Select Persona (or 'q' to cancel)")
-            table.add_column("#", style="cyan")
-            table.add_column("Shortcut", style="magenta")
-            table.add_column("Name", style="green")
-
-            for i, shortcut in enumerate(persona_list, 1):
-                file_path = personas[shortcut]
-                metadata = parse_frontmatter(file_path)
-                name = metadata.get("name", file_path.stem)
-                table.add_row(str(i), shortcut, name)
-
-            console.print(table)
-        else:
-            print("\nSelect persona (or 'q' to cancel):")
-            for i, shortcut in enumerate(persona_list, 1):
-                file_path = personas[shortcut]
-                metadata = parse_frontmatter(file_path)
-                name = metadata.get("name", file_path.stem)
-                print(f"  {i}) {shortcut:<4} → {name}")
+        # Fallback to plain numbered menu
+        print("\nSelect persona (or 'q' to cancel):")
+        for i, shortcut in enumerate(persona_list, 1):
+            file_path = personas[shortcut]
+            metadata = parse_frontmatter(file_path)
+            name = metadata.get("name", file_path.stem)
+            print(f"  {i}) {shortcut:<4} → {name}")
 
         while True:
             try:
@@ -218,22 +193,10 @@ def interactive_select(personas: Dict[str, Path]) -> Tuple[Path, str]:
         selected_model = selected.split(")")[1].split("→")[0].strip()
 
     else:
-        # Fallback to numbered menu (rich or plain)
-        if RICH_AVAILABLE:
-            print()
-            table = Table(title="Select Model (or 'q' to cancel)")
-            table.add_column("#", style="cyan")
-            table.add_column("Shortcut", style="magenta")
-            table.add_column("Model", style="green")
-
-            for i, model_key in enumerate(model_list, 1):
-                table.add_row(str(i), model_key, MODELS[model_key])
-
-            console.print(table)
-        else:
-            print("\nSelect model (or 'q' to cancel):")
-            for i, model_key in enumerate(model_list, 1):
-                print(f"  {i}) {model_key:<4} → {MODELS[model_key]}")
+        # Fallback to plain numbered menu
+        print("\nSelect model (or 'q' to cancel):")
+        for i, model_key in enumerate(model_list, 1):
+            print(f"  {i}) {model_key:<4} → {MODELS[model_key]}")
 
         selected_model = None
         while True:
@@ -450,11 +413,6 @@ def find_claude_cmd() -> str:
 
 def main():
     """Main entry point."""
-    # Show install hint if rich not available and in interactive mode
-    if len(sys.argv) == 1 and not RICH_AVAILABLE:
-        print("\n💡 Tip: Install 'rich' for beautifully formatted tables:")
-        print("   python3 -m pip install --user rich\n")
-
     personas, names = load_prompts()
 
     if not personas:
