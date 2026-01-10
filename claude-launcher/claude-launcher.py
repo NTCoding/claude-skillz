@@ -1,27 +1,57 @@
 #!/usr/bin/env python3
+"""
+Claude Launcher - Interactive system prompt and model selector for Claude Code.
+
+Features:
+- 2-step interactive selection (persona → model)
+- Shortcut mode: cl tdd sonn (order-independent)
+- Model shortcuts: cl haik, cl sonn, cl opus (uses default persona)
+- Frontmatter-based shortcuts (no hardcoding)
+- @ reference processing for skill imports
+"""
 
 import os
 import sys
 import subprocess
 import re
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, Tuple, Optional
 
-# Directories
+# Optional: rich for better UX
+try:
+    from rich.console import Console
+    from rich.table import Table
+    RICH_AVAILABLE = True
+    console = Console()
+except ImportError:
+    RICH_AVAILABLE = False
+    console = None
+
+# ============================================================================
+# Configuration
+# ============================================================================
+
 LAUNCHER_DIR = Path(__file__).parent.parent
 SYSTEM_PROMPTS_DIR = LAUNCHER_DIR / "system-prompts"
 GLOBAL_PROMPTS_DIR = Path.home() / ".claude" / "system-prompts"
 DEBUG_OUTPUT = Path("/tmp/claude-launcher-debug.md")
 
-# Model shortcuts
 MODELS = {
     "haik": "claude-3-5-haiku-20241022",
     "sonn": "claude-3-5-sonnet-20241022",
     "opus": "claude-3-5-opus-20241022",
 }
 
+# ============================================================================
+# Data Parsing
+# ============================================================================
+
 def parse_frontmatter(file_path: Path) -> Dict[str, str]:
-    """Parse YAML frontmatter from prompt file."""
+    """
+    Parse YAML frontmatter from prompt file.
+
+    Extracts key-value pairs between --- delimiters at the start of a file.
+    """
     metadata = {}
     try:
         with open(file_path) as f:
@@ -41,10 +71,18 @@ def parse_frontmatter(file_path: Path) -> Dict[str, str]:
 
     return metadata
 
+
 def load_prompts() -> Tuple[Dict[str, Path], Dict[str, Path]]:
-    """Load all system prompts and build shortcut maps."""
-    personas = {}  # shortcut -> file_path
-    names = {}     # name -> file_path
+    """
+    Load all system prompts and build shortcut maps.
+
+    Returns:
+        (personas_map, names_map) where:
+        - personas_map: shortcut -> file_path
+        - names_map: name -> file_path
+    """
+    personas = {}
+    names = {}
 
     # Search both directories
     for prompt_dir in [SYSTEM_PROMPTS_DIR, GLOBAL_PROMPTS_DIR]:
@@ -59,16 +97,175 @@ def load_prompts() -> Tuple[Dict[str, Path], Dict[str, Path]]:
 
             if "shortcut" in metadata:
                 shortcut = metadata["shortcut"]
-                if shortcut in personas and personas[shortcut] != file_path:
-                    # Track conflicts
-                    personas[shortcut] = file_path  # First match wins
-                else:
-                    personas[shortcut] = file_path
+                personas[shortcut] = file_path
 
     return personas, names
 
+# ============================================================================
+# CLI Interface
+# ============================================================================
+
+def interactive_select(personas: Dict[str, Path]) -> Tuple[Path, str]:
+    """
+    Interactive 2-step selection: persona, then model.
+
+    Returns:
+        (selected_file, selected_model_key)
+    """
+    # Step 1: Select persona
+    persona_list = sorted(personas.keys())
+
+    if RICH_AVAILABLE:
+        print()
+        table = Table(title="Select Persona (or 'q' to cancel)")
+        table.add_column("#", style="cyan")
+        table.add_column("Shortcut", style="magenta")
+        table.add_column("Name", style="green")
+
+        for i, shortcut in enumerate(persona_list, 1):
+            file_path = personas[shortcut]
+            metadata = parse_frontmatter(file_path)
+            name = metadata.get("name", file_path.stem)
+            table.add_row(str(i), shortcut, name)
+
+        console.print(table)
+    else:
+        print("\nSelect persona (or 'q' to cancel):")
+        for i, shortcut in enumerate(persona_list, 1):
+            file_path = personas[shortcut]
+            metadata = parse_frontmatter(file_path)
+            name = metadata.get("name", file_path.stem)
+            print(f"  {i}) {shortcut:<4} → {name}")
+
+    while True:
+        try:
+            choice = input("\nEnter number: ").strip()
+            if choice.lower() == 'q':
+                print("Cancelled")
+                sys.exit(0)
+
+            idx = int(choice) - 1
+            if 0 <= idx < len(persona_list):
+                selected_persona = personas[persona_list[idx]]
+                break
+            else:
+                print("Invalid selection. Try again.")
+        except ValueError:
+            print("Invalid input. Try again.")
+
+    # Step 2: Select model
+    model_list = list(MODELS.keys())
+
+    if RICH_AVAILABLE:
+        print()
+        table = Table(title="Select Model (or 'q' to cancel)")
+        table.add_column("#", style="cyan")
+        table.add_column("Shortcut", style="magenta")
+        table.add_column("Model", style="green")
+
+        for i, model_key in enumerate(model_list, 1):
+            table.add_row(str(i), model_key, MODELS[model_key])
+
+        console.print(table)
+    else:
+        print("\nSelect model (or 'q' to cancel):")
+        for i, model_key in enumerate(model_list, 1):
+            print(f"  {i}) {model_key:<4} → {MODELS[model_key]}")
+
+    selected_model = None
+    while True:
+        try:
+            choice = input("\nEnter number: ").strip()
+            if choice.lower() == 'q':
+                print("Cancelled")
+                sys.exit(0)
+
+            idx = int(choice) - 1
+            if 0 <= idx < len(model_list):
+                selected_model = model_list[idx]
+                break
+            else:
+                print("Invalid selection. Try again.")
+        except ValueError:
+            print("Invalid input. Try again.")
+
+    return selected_persona, selected_model
+
+
+def resolve_args(args: list, personas: Dict[str, Path]) -> Tuple[Path, str]:
+    """
+    Resolve command-line arguments to (persona_file, model_key).
+
+    Supports:
+    - Persona only: uses default model (opus)
+    - Model only: uses default persona (gen)
+    - Combined: order-independent (cl tdd sonn or cl sonn tdd)
+
+    Detects conflicts and uses first match with prominent warning.
+    """
+    persona_match = None
+    model_match = None
+
+    # Categorize arguments
+    for arg in args:
+        if arg in personas:
+            # Persona shortcut
+            if persona_match:
+                print(f"\n⚠️  SHORTCUT CONFLICT")
+                print(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                print(f"Multiple personas specified: {persona_match} and {arg}")
+                print(f"Using: {persona_match} (first match)")
+                print(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+            else:
+                persona_match = arg
+        elif arg in MODELS:
+            # Model shortcut
+            if model_match:
+                print(f"\n⚠️  SHORTCUT CONFLICT")
+                print(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                print(f"Multiple models specified: {model_match} and {arg}")
+                print(f"Using: {model_match} (first match)")
+                print(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+            else:
+                model_match = arg
+        else:
+            print(f"\n✗ Unknown shortcut: {arg}")
+            print(f"  Available personas: {', '.join(sorted(personas.keys()))}")
+            print(f"  Available models: {', '.join(sorted(MODELS.keys()))}")
+            sys.exit(1)
+
+    # Use default persona if only model specified
+    if not persona_match and model_match:
+        if "gen" in personas:
+            persona_match = "gen"
+        else:
+            print("✗ Default persona not found. Specify a persona shortcut.")
+            sys.exit(1)
+
+    # Use default model if only persona specified
+    if not model_match:
+        model_match = "opus"
+
+    # Validate we have both
+    if not persona_match:
+        print("✗ Persona required (e.g., 'tdd', 'opt', 'arc')")
+        sys.exit(1)
+
+    persona_file = personas[persona_match]
+    return persona_file, model_match
+
+# ============================================================================
+# Import Processing
+# ============================================================================
+
 def process_imports(file_path: Path) -> str:
-    """Process @ references in system prompt."""
+    """
+    Process @ references in system prompt file.
+
+    - Skips frontmatter (---...---)
+    - Expands @ references to skill content
+    - Adds header with skill manifest
+    """
     result = []
     imports = []
     errors = []
@@ -148,8 +345,19 @@ def process_imports(file_path: Path) -> str:
 
     return header + "".join(result)
 
+# ============================================================================
+# Claude Code Binary
+# ============================================================================
+
 def find_claude_cmd() -> str:
-    """Find Claude Code binary."""
+    """
+    Locate Claude Code binary.
+
+    Checks in order:
+    1. $CLAUDE_CMD environment variable
+    2. which claude (npm/nvm installations)
+    3. ~/.claude/local/claude (local installation)
+    """
     claude_cmd = os.environ.get("CLAUDE_CMD")
     if claude_cmd:
         return claude_cmd
@@ -173,112 +381,17 @@ def find_claude_cmd() -> str:
     print('  export CLAUDE_CMD="$(which claude)"', file=sys.stderr)
     sys.exit(1)
 
-def interactive_select(personas: Dict[str, Path]) -> Tuple[Path, Optional[str]]:
-    """Interactive 2-step selection: persona, then model."""
-    # Step 1: Select persona
-    persona_names = sorted(personas.keys())
-    print("\nSelect persona (or 'q' to cancel):")
-    for i, shortcut in enumerate(persona_names, 1):
-        file_path = personas[shortcut]
-        metadata = parse_frontmatter(file_path)
-        name = metadata.get("name", file_path.stem)
-        print(f"  {i}) {shortcut:<4} → {name}")
-
-    while True:
-        try:
-            choice = input("\nEnter number: ").strip()
-            if choice.lower() == 'q':
-                print("Cancelled")
-                sys.exit(0)
-
-            idx = int(choice) - 1
-            if 0 <= idx < len(persona_names):
-                selected_persona = personas[persona_names[idx]]
-                break
-            else:
-                print("Invalid selection. Try again.")
-        except ValueError:
-            print("Invalid input. Try again.")
-
-    # Step 2: Select model
-    print("\nSelect model (or 'q' to cancel):")
-    model_choices = list(MODELS.keys())
-    for i, model_key in enumerate(model_choices, 1):
-        print(f"  {i}) {model_key:<4} → {MODELS[model_key]}")
-
-    selected_model = None
-    while True:
-        try:
-            choice = input("\nEnter number: ").strip()
-            if choice.lower() == 'q':
-                print("Cancelled")
-                sys.exit(0)
-
-            idx = int(choice) - 1
-            if 0 <= idx < len(model_choices):
-                selected_model = MODELS[model_choices[idx]]
-                break
-            else:
-                print("Invalid selection. Try again.")
-        except ValueError:
-            print("Invalid input. Try again.")
-
-    return selected_persona, selected_model
-
-def resolve_args(args: List[str], personas: Dict[str, Path]) -> Tuple[Path, Optional[str]]:
-    """Resolve command-line arguments to persona and model."""
-    persona_match = None
-    model_match = None
-
-    # Categorize arguments
-    for arg in args:
-        if arg in personas:
-            # Persona shortcut
-            if persona_match:
-                print(f"\n⚠️  SHORTCUT CONFLICT")
-                print(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-                print(f"Multiple personas specified: {persona_match} and {arg}")
-                print(f"Using: {persona_match} (first match)")
-                print(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
-            else:
-                persona_match = arg
-        elif arg in MODELS:
-            # Model shortcut
-            if model_match:
-                print(f"\n⚠️  SHORTCUT CONFLICT")
-                print(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-                print(f"Multiple models specified: {model_match} and {arg}")
-                print(f"Using: {model_match} (first match)")
-                print(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
-            else:
-                model_match = arg
-        else:
-            print(f"\n✗ Unknown shortcut: {arg}")
-            print(f"  Available personas: {', '.join(sorted(personas.keys()))}")
-            print(f"  Available models: {', '.join(sorted(MODELS.keys()))}")
-            sys.exit(1)
-
-    # Use default persona if only model specified
-    if not persona_match and model_match:
-        if "gen" in personas:
-            persona_match = "gen"
-        else:
-            print("✗ Default persona not found. Specify a persona shortcut.")
-            sys.exit(1)
-
-    # Use default model if only persona specified
-    if not model_match:
-        model_match = "opus"
-
-    # Validate we have both
-    if not persona_match:
-        print("✗ Persona required (e.g., 'tdd', 'opt', 'arc')")
-        sys.exit(1)
-
-    persona_file = personas[persona_match]
-    return persona_file, MODELS[model_match]
+# ============================================================================
+# Main
+# ============================================================================
 
 def main():
+    """Main entry point."""
+    # Show install hint if rich not available and in interactive mode
+    if len(sys.argv) == 1 and not RICH_AVAILABLE:
+        print("\n💡 Tip: Install 'rich' for beautifully formatted tables:")
+        print("   pip install rich\n")
+
     personas, names = load_prompts()
 
     if not personas:
@@ -288,19 +401,18 @@ def main():
     # Parse arguments
     if len(sys.argv) > 1:
         # Shortcut mode
-        selected_file, model = resolve_args(sys.argv[1:], personas)
+        selected_file, model_key = resolve_args(sys.argv[1:], personas)
     else:
         # Interactive mode
-        selected_file, model = interactive_select(personas)
+        selected_file, model_key = interactive_select(personas)
 
     # Get persona name from frontmatter
     metadata = parse_frontmatter(selected_file)
     persona_name = metadata.get("name", selected_file.stem)
 
     print(f"\nSelected: {persona_name}")
-    if model:
-        model_display = next((k for k, v in MODELS.items() if v == model), model)
-        print(f"Model: {model_display}")
+    model_display = next((k for k, v in MODELS.items() if v == MODELS[model_key]), model_key)
+    print(f"Model: {model_display}")
     print()
 
     # Process imports
@@ -325,16 +437,10 @@ def main():
     claude_cmd = find_claude_cmd()
 
     # Build command
-    cmd = [claude_cmd, "--system-prompt", system_prompt]
-    if model:
-        cmd.extend(["--model", model])
+    cmd = [claude_cmd, "--system-prompt", system_prompt, "--model", MODELS[model_key]]
 
-    # Add user arguments if any
-    if len(sys.argv) > 1:
-        # No intro message for shortcut mode, just launch
-        pass
-    else:
-        # Interactive mode - add intro prompt
+    # No intro for shortcut mode, add for interactive
+    if len(sys.argv) == 1:
         cmd.append("introduce yourself")
 
     # Execute
@@ -343,6 +449,7 @@ def main():
     except Exception as e:
         print(f"Error launching Claude Code: {e}", file=sys.stderr)
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

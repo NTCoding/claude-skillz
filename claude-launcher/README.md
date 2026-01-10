@@ -27,6 +27,16 @@ alias cl='python3 /path/to/claude-launcher/claude-launcher.py'
 
 Or use the full path: `python3 claude-launcher.py`
 
+### Optional: Rich for Better UX
+
+For beautifully formatted tables in interactive mode:
+
+```bash
+pip install rich
+```
+
+Without `rich`, the launcher works with plain text tables. With it, you get colored output and styled tables.
+
 ### Configuration
 
 The launcher automatically detects your Claude Code binary in this order:
