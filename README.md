@@ -40,30 +40,7 @@ alias cl='python3 /path/to/claude-skillz/claude-launcher/claude-launcher.py'
 brew install fzf  # macOS
 ```
 
-### Adding Your Own Personas
-
-Create custom personas by adding markdown files with frontmatter metadata:
-
-1. Create `system-prompts/your-persona.md`:
-   ```markdown
-   ---
-   name: Your Persona Name
-   shortcut: ypr
-   ---
-
-   [Your persona instructions here...]
-
-   ## Skills
-
-   - @../skill-name/SKILL.md
-   - @../another-skill/SKILL.md
-   ```
-
-2. Your shortcut is immediately available: `cl ypr`
-
-The launcher discovers personas from:
-- `system-prompts/` (project-local)
-- `~/.claude/system-prompts/` (global)
+You can [add your own personas](claude-launcher/README.md#adding-your-own-personas) with frontmatter metadata.
 
 ### Persona Shortcuts
 
