@@ -59,6 +59,14 @@
       "keywords": ["pr-review", "feedback", "learning", "code-quality", "conventions"]
     },
     {
+      "name": "challenge-that",
+      "source": "./challenge-that",
+      "description": "Force critical evaluation of proposals from 5 adversarial perspectives (Skeptic, Pragmatist, Edge Case Hunter, Structural Critic, Root Cause Analyst)",
+      "version": "1.0.0",
+      "category": "productivity",
+      "keywords": ["critical-thinking", "evaluation", "review", "proposals", "decisions"]
+    },
+    {
       "name": "development-skills",
       "source": "./",
       "description": "Random skills for various software development tasks",
@@ -68,7 +76,6 @@
       "skills": [
         "./tdd-process",
         "./writing-tests",
-        "./challenge-that",
         "./lightweight-task-workflow",
         "./switch-persona",
         "./lightweight-implementation-analysis-protocol",
