@@ -219,6 +219,33 @@ These test implicit assumptions in your domain:
 - [ ] Format mismatches (expected JSON, got XML)
 - [ ] Temporal ordering (end before start)
 
+### Typed Property Validation
+
+When testing code that validates properties against type constraints (e.g., validating `route: string` in an interface):
+
+**Wrong-type literals:**
+- [ ] Numeric literal when string expected (`route = 123`)
+- [ ] Boolean literal when string expected (`route = true`)
+- [ ] String literal when number expected (`count = 'five'`)
+- [ ] String literal when boolean expected (`enabled = 'yes'`)
+
+**Non-literal expressions:**
+- [ ] Template literal (`` route = `/path/${id}` ``)
+- [ ] Variable reference (`route = someVariable`)
+- [ ] Function call (`route = getRoute()`)
+- [ ] Computed property (`route = config.path`)
+
+**Correct type:**
+- [ ] Valid literal of correct type (`route = '/orders'`)
+- [ ] Edge values (empty string `''`, zero `0`, `false`)
+
+**Why this matters:**
+A common bug pattern is validating "is this a literal?" without checking "is this the RIGHT TYPE of literal?"
+- `hasLiteralValue()` returns true for `123`, `true`, and `'string'`
+- `hasStringLiteralValue()` returns true only for `'string'`
+
+When an interface specifies `property: string`, validation must reject numeric and boolean literals, not just non-literal expressions.
+
 ## Bug Clustering
 
 When you discover a bug, don't stop—explore related scenarios:

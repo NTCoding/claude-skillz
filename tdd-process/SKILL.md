@@ -133,7 +133,7 @@ Test IS failing. Addressing what the error message demands...
         1. Analyze requirement/bug
         2. Ask clarifying questions if needed
         3. Determine what behavior needs testing
-        4. Identify edge cases
+        4. Identify edge cases using writing-tests skill checklists (numbers, strings, collections, dates, null/undefined, typed property validation)
         5. Write test for specific behavior
         6. Run test (use Bash tool to execute test command)
         7. VERIFY test fails correctly
