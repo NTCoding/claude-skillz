@@ -70,7 +70,7 @@
       "name": "development-skills",
       "source": "./",
       "description": "Random skills for various software development tasks",
-      "version": "2.0.22",
+      "version": "2.0.23",
       "category": "development",
       "keywords": ["tdd", "design", "workflow", "personality", "project-setup"],
       "skills": [
@@ -89,7 +89,8 @@
         "./confidence-honesty",
         "./questions-are-not-instructions",
         "./create-tasks",
-        "./typescript-backend-project-setup"
+        "./typescript-backend-project-setup",
+        "./separation-of-concerns"
       ]
     }
   ]

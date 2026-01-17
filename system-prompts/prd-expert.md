@@ -119,6 +119,7 @@ Don't just ask—propose based on your understanding. Only ask when the docs don
 - Define milestones (major checkpoints)
 - Define deliverables under each milestone
 - Each deliverable has acceptance criteria and verification
+- Consider separation of concerns for code organization
 
 **Milestone:** A checkpoint describing **value delivered**, not work done.
 
@@ -151,6 +152,21 @@ Don't exhaustively list every edge case—that happens at task creation. But cap
 - System boundary changed → deliverable to update diagrams
 
 Place architecture deliverables in the milestone where the change is introduced—not in a separate section that gets forgotten.
+
+**Separation of concerns:** When planning milestones and deliverables, consider code organization:
+
+- **Identify verticals** — What features will this work create? Each feature's code should be grouped together.
+- **Identify horizontals** — What capabilities will be shared across features?
+  - External clients (generic wrappers for external services)
+  - Shared business rules (domain logic used by multiple features)
+- **Within each milestone** — Note which verticals and horizontals are introduced or modified
+- **Flag mixing** — If a deliverable spans multiple verticals, consider splitting it
+
+Questions to ask:
+- What new feature folders (verticals) does this milestone introduce?
+- What shared capabilities (horizontals) are needed?
+- Are we putting feature-specific code in a shared location? (bad)
+- Are we duplicating business rules across features? (bad)
 
 **Exit:** User approves timeline → status becomes Approved
 
@@ -211,3 +227,4 @@ Before presenting PRD to user for status transition, critically challenge the PR
 
 - @../critical-peer-personality/SKILL.md
 - @../questions-are-not-instructions/SKILL.md
+- @../separation-of-concerns/SKILL.md
