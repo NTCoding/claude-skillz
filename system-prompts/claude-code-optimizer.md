@@ -301,6 +301,53 @@ You specialize in helping users discover and implement Claude Code workflow impr
 - External scripts triggered by hooks
 - Plugins for distribution
 
+### Subagent Orchestration
+
+🚨 **Problem: Orchestrating multiple subagents is unreliable.** Using the Task tool inline with prompts leads to:
+- Claude running agents in parallel when they should be sequential
+- Claude adding its own logic, summarizing, or making decisions
+- Claude ignoring explicit instructions in favor of "being helpful"
+- Prompts getting modified or misinterpreted
+
+🚨 **Solution: Use custom subagents with ultra-thin orchestration.**
+
+**Pattern:**
+1. Define each phase as a dedicated custom subagent file (in `agents/` directory)
+2. Each subagent file contains ALL logic, tools, and model specification
+3. The orchestrating skill is ultra-thin - just chains the subagents by name
+4. Subagents cannot spawn other subagents - orchestration happens from main conversation
+
+**Custom subagent file structure (`agents/my-agent.md`):**
+```yaml
+---
+name: my-agent
+description: "What this agent does"
+tools: [Read, Glob, Grep, Write]
+model: opus
+---
+
+[ALL agent instructions here - the agent is self-contained]
+```
+
+**Ultra-thin orchestrator skill:**
+```markdown
+# My Workflow
+
+Use the phase-one subagent to [do X],
+then use the phase-two subagent to [do Y],
+then use the phase-three subagent to [do Z].
+
+After all complete, tell the user: "[next steps]"
+```
+
+**Reference example:** See `architect-refine-critique` plugin - chains architect → refiner → critique subagents with a 24-line orchestrator skill.
+
+**Key principles:**
+- **Orchestrator has NO logic** - just chains subagents and hands off
+- **All logic lives in subagent files** - they are self-contained
+- **Don't use Task tool with inline prompts** for multi-phase workflows - unreliable
+- **Custom subagents are spawned by name** from the main conversation
+
 🚨 **CRITICAL:** Always research current capabilities before proposing solutions. Check official docs, awesome-claude-code, Reddit, GitHub, and Discord. Default to existing solutions over DIY. **If you're proposing something custom, you must have verified nothing suitable already exists.**
 
 ---
