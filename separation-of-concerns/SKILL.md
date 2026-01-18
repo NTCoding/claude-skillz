@@ -1,7 +1,7 @@
 ---
 name: Separation of Concerns
-description: "Enforces code organization using features/ (verticals) and platform/ (horizontals). Triggers on: code organization, file structure, where does this belong, feature vs platform, new file creation, refactoring."
-version: 1.5.0
+description: "Enforces code organization using features/ (verticals), platform/ (horizontals), and entrypoints/ (api, cli, consumers). Triggers on: code organization, file structure, where does this belong, new file creation, refactoring."
+version: 1.6.0
 ---
 
 # Separation of Concerns
@@ -22,13 +22,14 @@ version: 1.5.0
 Top-level folders distinguish them:
 - `features/` — verticals (work in these)
 - `platform/` — horizontals (build on these)
+- `entrypoints/` — how traffic enters (api, cli, consumers)
 
 ```
-features/                    platform/
-├── checkout/                ├── domain/
-├── refunds/                 │   └── tax-calculation/
-├── inventory/               └── infra/
-└── shipping/                    └── external-clients/
+features/         platform/              entrypoints/
+├── checkout/     ├── domain/            ├── api/
+├── refunds/      │   └── tax-calc/      ├── cli/
+├── inventory/    └── infra/             └── consumers/
+└── shipping/         └── ext-clients/
 ```
 
 ---
@@ -184,7 +185,7 @@ Top-level: `features/` and `platform/`. Both can be layered internally:
 - **domain/** - business rules, models, value objects
 - **infra/** - external services, persistence, frameworks
 
-Entry points live at root or in dedicated folders:
+Entry points grouped under `entrypoints/`:
 - **api/** - HTTP controllers
 - **cli/** - CLI commands
 - **consumers/** - event/message consumers
@@ -209,9 +210,10 @@ Entry points live at root or in dedicated folders:
 │   └── infra/
 │       └── external-clients/  ← generic wrappers
 │
-├── api/                       ← ENTRY POINTS (call into features)
-├── cli/
-└── consumers/
+└── entrypoints/               ← HOW TRAFFIC ENTERS
+    ├── api/                   ← HTTP (calls into features)
+    ├── cli/                   ← command line
+    └── consumers/             ← events/messages
 ```
 
 ### Platform code rules
