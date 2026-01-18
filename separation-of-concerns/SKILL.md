@@ -1,7 +1,7 @@
 ---
 name: Separation of Concerns
 description: "Enforces code organization using features/ (verticals), platform/ (horizontals), and shell/ (thin wiring). Triggers on: code organization, file structure, where does this belong, new file creation, refactoring."
-version: 2.0.0
+version: 2.2.0
 ---
 
 # Separation of Concerns
@@ -20,21 +20,22 @@ version: 2.0.0
 **Horizontal** = capabilities used by MULTIPLE features
 
 All three top-level folders are mandatory:
-- `features/` — verticals, each with its own entry point (command.ts, handler.ts, etc.)
+- `features/` — verticals, each with entrypoint/, use-cases/, domain/
 - `platform/` — horizontals, only contains `domain/` and `infra/` (nothing else)
 - `shell/` — thin wiring/routing only (no business logic)
+
+infra/ lives in platform/infra/, not inside features.
 
 ```
 features/              platform/              shell/
 ├── checkout/          ├── domain/            └── cli.ts
-│   ├── command.ts     │   └── tax-calc/
-│   └── ...            └── infra/
-├── refunds/               └── ext-clients/
-│   ├── command.ts
-│   └── ...
-└── shipping/
-    ├── command.ts
-    └── ...
+│   ├── entrypoint/    │   └── tax-calc/
+│   ├── use-cases/     └── infra/
+│   └── domain/            └── ext-clients/
+└── refunds/
+    ├── entrypoint/
+    ├── use-cases/
+    └── domain/
 ```
 
 ---
@@ -187,21 +188,19 @@ class OrderNotifications { emailClient, templateEngine }
 ```
 /food-delivery/
 ├── features/
-│   ├── order-placement/       ← VERTICAL
-│   │   ├── command.ts         ← entry point
-│   │   ├── use-cases/         ← MANDATORY
-│   │   ├── domain/            ← MANDATORY
-│   │   └── infra/             ← MANDATORY
+│   ├── order-placement/
+│   │   ├── entrypoint/        ← thin, invokes use-case
+│   │   ├── use-cases/         ← orchestration
+│   │   └── domain/            ← business rules
 │   │
 │   └── driver-tracking/
-│       ├── command.ts
+│       ├── entrypoint/
 │       ├── use-cases/
-│       ├── domain/
-│       └── infra/
+│       └── domain/
 │
 ├── platform/
-│   ├── domain/                ← ONLY these two
-│   └── infra/                 ← ONLY these two
+│   ├── domain/                ← shared business rules
+│   └── infra/                 ← technical concerns (infra lives here, not in features)
 │
 └── shell/
     └── cli.ts
@@ -213,43 +212,16 @@ class OrderNotifications { emailClient, templateEngine }
 
 When designing, implementing, refactoring, or reviewing code, complete this checklist:
 
-### Top-level structure
-- [ ] features/ exists
-- [ ] platform/ exists
-- [ ] shell/ exists
+1. [ ] Verify features/, platform/, shell/ exist at the root of the package
+2. [ ] Verify platform/ contains only domain/ and infra/
+3. [ ] Verify each feature contains only entrypoint/, use-cases/, domain/
+4. [ ] Verify shell/ contains no business logic
+5. [ ] Verify code belonging to one feature is in features/[feature]/
+6. [ ] Verify shared business logic is in platform/domain/ and no dependencies between features
+7. [ ] Verify external service wrappers are in platform/infra/
+8. [ ] Verify custom folders (steps/, handlers/) are inside use-cases/ or domain/, not at feature root
+9. [ ] Verify each function relies on same state as others in its class/file and name aligns
+10. [ ] Verify each file name relates to other files in its directory
+11. [ ] Verify each directory name describes what all files inside have in common
 
-### platform/
-- [ ] contains ONLY domain/ and infra/ (nothing else at platform root)
-- [ ] shared business logic → platform/domain/
-- [ ] external service wrappers → platform/infra/
-
-### shell/
-- [ ] contains NO business logic (thin wiring/routing only)
-
-### Each feature (complete for EVERY feature)
-
-Feature: _______________
-- [ ] has entry point at root (command.ts, handler.ts)
-- [ ] has use-cases/ folder
-- [ ] has domain/ folder
-- [ ] has infra/ folder
-- [ ] NO other files at feature root
-- [ ] NO other folders at feature root (custom folders go inside use-cases/, domain/, or infra/)
-
-Feature: _______________
-- [ ] has entry point at root (command.ts, handler.ts)
-- [ ] has use-cases/ folder
-- [ ] has domain/ folder
-- [ ] has infra/ folder
-- [ ] NO other files at feature root
-- [ ] NO other folders at feature root
-
-(repeat for each feature)
-
-### Code placement
-- [ ] code belonging to one feature → features/[feature]/
-- [ ] code used by multiple features → platform/domain/ or platform/infra/
-- [ ] external service wrappers → platform/infra/external-clients/
-- [ ] custom folders (steps/, handlers/) → inside use-cases/, domain/, or infra/
-
-**Do not proceed until all checks pass.**
+Do not proceed until all checks pass.
