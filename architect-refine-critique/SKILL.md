@@ -18,6 +18,15 @@ Three-phase design review with dedicated sub-agents. Each agent works independen
 | **Refiner** | separation-of-concerns + tactical-ddd | refined.md |
 | **Critique** | separation-of-concerns + tactical-ddd | critique.md |
 
+## Invoking
+
+User says: `/arc [name] [target]`
+
+- `[name]` — review name (used for folder)
+- `[target]` — what to review (codebase path, PRD reference, etc.)
+
+Example: `/arc payment-refactor src/payments/`
+
 ## Main Agent Checklist
 
 Follow this checklist exactly. Do not skip steps. Do not run phases in parallel.
@@ -134,12 +143,3 @@ docs/design-reviews/
     ├── decisions.md            ← Main agent writes this
     └── implementation-plan.md  ← Main agent writes this
 ```
-
-## Invoking
-
-User says: `/arc [name] [target]`
-
-- `[name]` — review name (used for folder)
-- `[target]` — what to review (codebase path, PRD reference, etc.)
-
-Example: `/arc payment-refactor src/payments/`
