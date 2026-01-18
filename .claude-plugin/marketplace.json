@@ -70,7 +70,7 @@
       "name": "architect-refine-critique",
       "source": "./architect-refine-critique",
       "description": "Three-phase design review workflow: Architect (structure) → Refiner (tactical detail) → Critique (challenges). Uses sub-agents with human review.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "category": "development",
       "keywords": ["architecture", "design-review", "refactoring", "ddd", "separation-of-concerns"]
     },

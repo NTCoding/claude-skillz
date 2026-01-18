@@ -1,52 +1,36 @@
 ---
 name: Architect-Refine-Critique
 description: "Three-phase design review workflow using sub-agents. Architect designs (separation-of-concerns), Refiner analyzes (tactical-ddd), Critique challenges. Main agent orchestrates and facilitates user discussion."
-version: 1.0.0
+version: 1.0.1
 ---
 
 # Architect-Refine-Critique
 
 Three-phase design review with dedicated sub-agents. Each agent works independently, producing their best work. Main agent is thin orchestrator only.
 
-## Workflow
-
-```
-1. Architect sub-agent → plan.md (complete design)
-2. Refiner sub-agent → refined.md (domain modeling analysis)
-3. Critique sub-agent → critique.md (challenges)
-4. User + Main agent → discuss findings → decisions.md
-```
+**CRITICAL: Phases run SEQUENTIALLY. Each phase MUST complete before the next begins.**
 
 ## Roles
 
 | Role | Skill | Output |
 |------|-------|--------|
-| **Architect** | separation-of-concerns | Complete design plan |
-| **Refiner** | tactical-ddd | Domain modeling analysis |
-| **Critique** | separation-of-concerns + tactical-ddd | Challenges grouped by severity |
+| **Architect** | separation-of-concerns | plan.md |
+| **Refiner** | tactical-ddd | refined.md |
+| **Critique** | separation-of-concerns + tactical-ddd | critique.md |
 
-## Main Agent Behavior
+## Main Agent Checklist
 
-**You are the orchestrator.** You coordinate sub-agents and facilitate discussion. You do NOT summarize or filter sub-agent output.
+Follow this checklist exactly. Do not skip steps. Do not run phases in parallel.
 
-**You DO:**
-- Spawn sub-agents in sequence
-- Tell user where output files are
-- Facilitate discussion by reading files when needed
-- Help user work through findings one by one
-- Record decisions to decisions.md
+### Phase 1: Architect
 
-**You do NOT:**
-- Summarize sub-agent output
-- Filter or interpret findings
-- Add your own analysis to sub-agent work
-
-## Phase 1: Architect
-
-Spawn sub-agent with this prompt:
+1. [ ] Spawn a **general-purpose** sub-agent with write permissions
+2. [ ] Use this exact prompt (replace [name] and [target]):
 
 ```
 You are the Architect. Produce the best possible design for this codebase/requirements.
+
+Target: [target]
 
 Skills to apply:
 - separation-of-concerns
@@ -55,14 +39,18 @@ Your job:
 1. Analyze the codebase or requirements provided
 2. Apply the separation-of-concerns skill thoroughly
 3. Produce a complete design plan
-4. Write your plan to: docs/design-reviews/[name]/plan.md
+4. IMPORTANT: Write your plan to: docs/design-reviews/[name]/plan.md
 
-Be thorough. Produce your best work.
+Be thorough. Produce your best work. You MUST write the file before finishing.
 ```
 
-## Phase 2: Refiner
+3. [ ] **WAIT** for the sub-agent to complete
+4. [ ] **VERIFY** docs/design-reviews/[name]/plan.md exists before proceeding
 
-Spawn sub-agent with this prompt:
+### Phase 2: Refiner
+
+5. [ ] Spawn a **general-purpose** sub-agent with write permissions
+6. [ ] Use this exact prompt (replace [name]):
 
 ```
 You are the Refiner. Improve this design by applying tactical DDD patterns.
@@ -73,17 +61,21 @@ Skills to apply:
 - tactical-ddd
 
 Your job:
-1. Review the design
+1. Read the plan.md file first
 2. Apply the tactical-ddd skill thoroughly
 3. Improve any aspects of the design that you feel can be improved
-4. Write your refined design to: docs/design-reviews/[name]/refined.md
+4. IMPORTANT: Write your refined design to: docs/design-reviews/[name]/refined.md
 
-Be thorough. Produce your best work.
+Be thorough. Produce your best work. You MUST write the file before finishing.
 ```
 
-## Phase 3: Critique
+7. [ ] **WAIT** for the sub-agent to complete
+8. [ ] **VERIFY** docs/design-reviews/[name]/refined.md exists before proceeding
 
-Spawn sub-agent with this prompt:
+### Phase 3: Critique
+
+9. [ ] Spawn a **general-purpose** sub-agent with write permissions
+10. [ ] Use this exact prompt (replace [name]):
 
 ```
 You are the Critique. Challenge this design ruthlessly.
@@ -95,62 +87,58 @@ Skills to apply:
 - tactical-ddd
 
 Your job:
-1. Find violations of design principles
-2. Question assumptions
-3. Identify ambiguities and gaps
-4. Group findings by severity: CRITICAL, HIGH, MEDIUM, LOW
-5. Write your critique to: docs/design-reviews/[name]/critique.md
+1. Read the refined.md file first
+2. Find violations of design principles
+3. Question assumptions
+4. Identify ambiguities and gaps
+5. Group findings by severity: CRITICAL, HIGH, MEDIUM, LOW
+6. IMPORTANT: Write your critique to: docs/design-reviews/[name]/critique.md
 
 Be ultra-critical. Include uncertain findings. False positives are better than missed issues.
+You MUST write the file before finishing.
 ```
 
-## Phase 4: Facilitated Discussion
+11. [ ] **WAIT** for the sub-agent to complete
+12. [ ] **VERIFY** docs/design-reviews/[name]/critique.md exists before proceeding
 
-After all sub-agents complete:
+### Phase 4: Facilitated Discussion
 
-1. [ ] Tell user: "Design review complete. Files are at docs/design-reviews/[name]/"
-2. [ ] Ask user to read the documents
-3. [ ] When user is ready, walk through each critique finding one by one
-4. [ ] For each finding: present it, discuss validity and context with user
-5. [ ] Record user's decision and rationale to decisions.md
-6. [ ] Continue until all findings are addressed
-7. [ ] Produce final implementation plan: implementation-plan.md
+13. [ ] Tell user: "Design review complete. Files are at docs/design-reviews/[name]/"
+14. [ ] Ask user to read the documents
+15. [ ] When user is ready, walk through each critique finding one by one
+16. [ ] For each finding: present it, discuss validity and context with user
+17. [ ] Record user's decision and rationale to decisions.md
+18. [ ] Continue until all findings are addressed
+19. [ ] Produce final implementation plan: implementation-plan.md
 
-## Final Deliverable: implementation-plan.md
+## Main Agent Behavior
 
-After all findings are addressed, create the implementation plan:
+**You are the orchestrator.** You coordinate sub-agents and facilitate discussion. You do NOT summarize or filter sub-agent output.
 
-1. Start with the refined design from refined.md
-2. Incorporate all accepted critique findings
-3. Remove or adjust anything rejected during discussion
-4. Produce a clean, actionable implementation plan
-
-The implementation plan is the single source of truth for implementation.
+**You do NOT:**
+- Run phases in parallel
+- Summarize sub-agent output
+- Filter or interpret findings
+- Add your own analysis to sub-agent work
+- Write files that sub-agents should write
 
 ## Output Structure
 
 ```
 docs/design-reviews/
 └── [review-name]/
-    ├── plan.md                 ← Architect output
-    ├── refined.md              ← Refiner output
-    ├── critique.md             ← Critique output
-    ├── decisions.md            ← User decisions + rationale
-    └── implementation-plan.md  ← Final deliverable
+    ├── plan.md                 ← Architect writes this
+    ├── refined.md              ← Refiner writes this
+    ├── critique.md             ← Critique writes this
+    ├── decisions.md            ← Main agent writes this
+    └── implementation-plan.md  ← Main agent writes this
 ```
 
 ## Invoking
 
-User says: `/architect-refine-critique [name] [target]`
+User says: `/arc [name] [target]`
 
 - `[name]` — review name (used for folder)
 - `[target]` — what to review (codebase path, PRD reference, etc.)
 
-Example: `/architect-refine-critique payment-refactor src/payments/`
-
-## When to Use
-
-- Planning a refactoring
-- Reviewing a PRD before implementation
-- Designing a new feature's structure
-- Validating an existing architecture
+Example: `/arc payment-refactor src/payments/`
