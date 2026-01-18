@@ -1,7 +1,7 @@
 ---
 name: Separation of Concerns
-description: "Enforces code organization using verticals (features) and horizontals (shared capabilities). Triggers on: code organization, file structure, where does this belong, feature vs shared, new file creation, refactoring."
-version: 1.3.0
+description: "Enforces code organization using features/ (verticals) and platform/ (horizontals). Triggers on: code organization, file structure, where does this belong, feature vs platform, new file creation, refactoring."
+version: 1.4.0
 ---
 
 # Separation of Concerns
@@ -16,16 +16,19 @@ version: 1.3.0
 
 ## Mental Model: Verticals and Horizontals
 
-**Vertical** = all code for ONE feature, grouped together (checkout/, refunds/, shipping/)
-**Horizontal** = shared code used by MULTIPLE features, named for what it IS (tax-calculation/, external-clients/)
+**Vertical** = all code for ONE feature, grouped together
+**Horizontal** = capabilities used by MULTIPLE features
+
+Top-level folders distinguish them:
+- `features/` — verticals (work in these)
+- `platform/` — horizontals (build on these)
 
 ```
-checkout/     refunds/     inventory/     shipping/
-    │             │             │             │
-    └─────────────┴─────────────┴─────────────┘
-                  │                   │
-          external-clients/    tax-calculation/
-          (generic wrappers)   (shared domain)
+features/                    platform/
+├── checkout/                ├── external-clients/
+├── refunds/                 │   (generic wrappers)
+├── inventory/               └── tax-calculation/
+└── shipping/                    (shared domain)
 ```
 
 ---
@@ -43,12 +46,12 @@ checkout/     refunds/     inventory/     shipping/
 
 ```
 ❌ BAD:
-external-clients/order-total.ts      ← domain logic in external-clients
-checkout/stripe-api.ts               ← external client in vertical
+platform/external-clients/order-total.ts   ← domain logic in platform
+features/checkout/stripe-api.ts            ← external client in feature
 
 ✅ GOOD:
-external-clients/stripe.ts           ← generic: charge, refund, subscribe
-checkout/payment-processing.ts       ← OUR domain logic using stripe
+platform/external-clients/stripe.ts        ← generic: charge, refund, subscribe
+features/checkout/payment-processing.ts    ← OUR domain logic using stripe
 ```
 
 ---
@@ -61,22 +64,22 @@ checkout/payment-processing.ts       ← OUR domain logic using stripe
 
 **How:**
 - Ask: "Does this conceptually belong to one feature?"
-- YES → keep in that vertical
-- NO → extract to horizontal, name it for what it IS
+- YES → keep in features/
+- NO → extract to platform/, name it for what it IS
 
 ```
-❌ BAD - buried in one vertical:
-checkout/tax-calculator.ts
-refunds/refund.ts                    ← imports ../checkout/tax-calculator
+❌ BAD - buried in one feature:
+features/checkout/tax-calculator.ts
+features/refunds/refund.ts           ← imports ../checkout/tax-calculator
 
 ❌ BAD - duplicated:
-checkout/tax-calculator.ts
-refunds/tax-calculator.ts            ← rules diverge over time
+features/checkout/tax-calculator.ts
+features/refunds/tax-calculator.ts   ← rules diverge over time
 
-✅ GOOD - extracted:
-checkout/
-refunds/
-tax-calculation/tax-calculator.ts    ← horizontal, named for what it IS
+✅ GOOD - extracted to platform:
+features/checkout/
+features/refunds/
+platform/tax-calculation/            ← horizontal, named for what it IS
 ```
 
 ---
@@ -175,52 +178,51 @@ class OrderNotifications { emailClient, templateEngine }
 
 ## Package Structure
 
-Verticals and horizontals can be layered internally:
+Top-level: `features/` and `platform/`. Both can be layered internally:
 
 - **use-cases/** - orchestration, commands, workflows
 - **domain/** - business rules, models, value objects
 - **infra/** - external services, persistence, frameworks
-- **api/** - HTTP controllers (entry point)
-- **cli/** - CLI commands (entry point)
-- **consumers/** - event/message consumers (entry point)
+
+Entry points live at root or in dedicated folders:
+- **api/** - HTTP controllers
+- **cli/** - CLI commands
+- **consumers/** - event/message consumers
 
 ```
 /food-delivery/
-├── order-placement/       ← VERTICAL
-│   ├── use-cases/
-│   ├── domain/
-│   └── infra/
+├── features/
+│   ├── order-placement/       ← VERTICAL
+│   │   ├── use-cases/
+│   │   ├── domain/
+│   │   └── infra/
+│   │
+│   └── driver-tracking/       ← VERTICAL
+│       ├── use-cases/
+│       ├── domain/
+│       └── infra/
 │
-├── driver-tracking/       ← VERTICAL
-│   ├── use-cases/
-│   ├── domain/
-│   └── infra/
+├── platform/
+│   ├── delivery-fee/          ← HORIZONTAL (shared domain)
+│   ├── external-clients/      ← HORIZONTAL (generic wrappers)
+│   └── conventions/           ← HORIZONTAL (our rules)
 │
-├── api/                   ← ENTRY POINTS (call into verticals)
+├── api/                       ← ENTRY POINTS (call into features)
 ├── cli/
-├── consumers/
-│
-├── domain/                ← SHARED (not owned by any vertical)
-│   └── delivery-fee/
-│
-├── infra/                 ← SHARED (not owned by any vertical)
-│   └── external-clients/
-│
-└── conventions/           ← OUR rules for using externals
+└── consumers/
 ```
 
-### Shared code rules
+### Platform code rules
 
-**Within a package:** Code not owned by any specific vertical → put in root-level `domain/` or `infra/`
-- Ask: "Does this conceptually belong to one vertical?" NO → root level
+- Ask: "Does this conceptually belong to one feature?"
+- YES → `features/`
+- NO → `platform/`, named for what it IS
 
-**Between packages:** Code not owned by any specific package → extract to a separate shared package
-
-### Detection: Inside a vertical or at package level?
+### Detection: Inside a feature or in platform?
 
 **Look at the siblings:**
-- Siblings are layers (use-cases/, domain/, infra/) → **INSIDE a vertical**
-- Siblings are verticals (order-placement/, shipping/) → **PACKAGE level (shared)**
+- Siblings are layers (use-cases/, domain/, infra/) → **INSIDE a feature**
+- Siblings are capabilities (delivery-fee/, external-clients/) → **PLATFORM**
 
 ---
 
@@ -229,7 +231,7 @@ Verticals and horizontals can be layered internally:
 ### For each function
 
 1. Does it rely on the same state and have a similar name to other functions in the class/file? Does the name align with the class/file name?
-2. If inside a vertical, is it only used inside that vertical?
+2. If inside a feature, is it only used inside that feature?
 
 ### For each file
 
@@ -238,6 +240,6 @@ Verticals and horizontals can be layered internally:
 ### For each directory
 
 1. Does the directory name describe what all files inside have in common?
-2. Are the sibling directories related? (all verticals, or all layers - not mixed)
-3. If inside a vertical, is it only imported within that vertical?
+2. Are the sibling directories related? (all features, all layers, or all platform capabilities - not mixed)
+3. If inside a feature, is it only imported within that feature?
 4. Does it contain what it should based on its name? (use-cases/ has orchestration, domain/ has business rules, infra/ has external integrations)
