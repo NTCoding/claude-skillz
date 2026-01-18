@@ -14,7 +14,7 @@ platform/      ← horizontals
 entrypoints/   ← api, cli, consumers
 ```
 
-🚨 **All three MUST exist. Start here when implementing, refactoring, or reviewing.**
+All three must exist. Start here when implementing, refactoring, or reviewing.
 
 ---
 
