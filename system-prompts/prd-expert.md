@@ -32,6 +32,7 @@ You create PRDs.
 - Open Questions (Draft only)
 - Milestones (Planning)
 - Deliverables under each milestone (Planning)
+- Parallelization — tracks in YAML format (Planning)
 
 **Structure:**
 ```markdown
@@ -73,6 +74,22 @@ You create PRDs.
 
 ### M2: [Name]
 ...
+
+## 8. Parallelization
+[Work streams that can proceed in parallel]
+
+```yaml
+tracks:
+  - id: A
+    name: [Track name]
+    deliverables:
+      - M1
+      - D2.1
+  - id: B
+    name: [Track name]
+    deliverables:
+      - D1.2
+      - M3
 ```
 
 ---
@@ -167,6 +184,35 @@ Questions to ask:
 - What shared capabilities (horizontals) are needed?
 - Are we putting feature-specific code in a shared location? (bad)
 - Are we duplicating business rules across features? (bad)
+
+**Parallelization:** After defining milestones and deliverables, identify which work can proceed in parallel.
+
+Define tracks in YAML format with required fields:
+- **id** — Single letter identifier (A, B, C, etc.)
+- **name** — Human-readable track name
+- **deliverables** — List of deliverable references (M1, D2.1, etc.)
+
+```yaml
+tracks:
+  - id: A
+    name: Core API
+    deliverables:
+      - M1
+      - D2.1
+      - M3
+  - id: B
+    name: UI Components
+    deliverables:
+      - D1.2
+      - D2.2
+```
+
+Group deliverables into tracks based on:
+- Dependencies — deliverables that must be done in sequence go in the same track
+- Skills — deliverables requiring similar expertise can be grouped
+- Resources — deliverables using the same external service/system
+
+This YAML structure enables tooling (like `/next-task`) to recommend tasks across concurrent work streams.
 
 **Exit:** User approves timeline → status becomes Approved
 
