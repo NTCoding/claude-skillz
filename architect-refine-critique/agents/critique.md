@@ -33,6 +33,40 @@ Write to: `docs/design-reviews/[name]/critique.md`
 3. **What could be simpler** - Unnecessary complexity, over-engineering, premature abstraction
 4. **Gaps** - Missing error handling, unclear boundaries, unstated assumptions, etc
 
+## Checklist: Common Mistakes from Architect and Refiner
+
+The Architect and Refiner often miss these. Check every item:
+
+### Structural
+
+1. **Implementation details placed in use-cases/**: Apply the "menu test"—would a user recognize this as an action they can perform? If no, it's not a use-case. Implementation details (stages, handlers, processors, validators) belong in `domain/`, not `use-cases/`.
+
+2. **Entrypoint-only features**: Feature has `entrypoint/` + `domain/` but no `use-cases/`. This is broken—entrypoint cannot depend on domain. All features need three layers.
+
+3. **Nested folders in use-cases/**: Any subfolder (`use-cases/stages/`, `use-cases/helpers/`) is a CRITICAL violation.
+
+### Domain vs Infrastructure
+
+4. **Custom abstractions pushed to infra**: Ask: did this team build this abstraction? If yes, it's domain, not generic infrastructure. Pipeline runners, workflow executors, orchestration patterns you designed are YOUR domain.
+
+5. **Translation functions pushed to infra**: A function that transforms external API responses into domain types IS domain logic. It's the translation layer. Don't push it to infra just because it touches external formats.
+
+### Bounded Contexts
+
+6. **Named contexts without structural separation**: Two "bounded contexts" in one package with shared imports = one context with multiple features. Naming alone is meaningless.
+
+7. **Cohesive features split into separate contexts**: Different entrypoints ≠ different contexts. If features share purpose (e.g., hooks enforce a workflow), they're one context.
+
+### DDD Terminology
+
+8. **"Aggregate" without invariants**: No invariants to protect = not an aggregate. Flag mislabeled aggregates as simple domain types.
+
+9. **Trivial value objects**: Wrapping primitives is fine, but flag if a value object adds nothing (no behavior, no validation, no semantic meaning).
+
+### Pragmatism
+
+10. **Complexity disproportionate to problem**: 40-file restructure for 20-file package needs justification. Valid if establishing pattern for repo-wide rollout.
+
 ## Output Structure
 
 ```markdown
