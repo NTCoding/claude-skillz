@@ -1,7 +1,7 @@
 ---
 name: Separation of Concerns
 description: "Enforces code organization using features/ (verticals), platform/ (horizontals), and shell/ (thin wiring). Triggers on: code organization, file structure, where does this belong, new file creation, refactoring."
-version: 2.5.0
+version: 2.5.1
 ---
 
 # Separation of Concerns
@@ -20,10 +20,11 @@ version: 2.5.0
 **Horizontal** = capabilities used by MULTIPLE features
 
 All three top-level folders are mandatory:
-- `features/` — verticals, each with entrypoint/, commands/, queries/, domain/
+- `features/` — verticals, containing some combination of entrypoint/, commands/, queries/, domain/
   - commands/ orchestrates write operations; MUST go through domain/
   - queries/ handles read operations; MAY bypass domain/
-  - domain/ contains business rules and behavior (required if commands/ exists)
+  - domain/ contains business rules (required if commands/ exists)
+  - entrypoint/ only needed when exposing external interface (HTTP, CLI, events)
 - `platform/` — horizontals, only contains `domain/` and `infra/` (nothing else)
 - `shell/` — thin wiring/routing only (no business logic)
 
@@ -168,6 +169,8 @@ class GetOrderSummaryQuery {
 - ❌ NO business rule enforcement (queries trust the data)
 
 **Naming:** Verb phrase describing what you're fetching. `get-order-summary.ts`, `list-pending-refunds.ts`, `search-products.ts`.
+
+**Query-only features:** Features that only read data need only `queries/`. No entrypoint/ required if queries are consumed internally by other features. No domain/ required since no invariants to protect.
 
 ---
 
@@ -325,9 +328,12 @@ class OrderNotifications { emailClient, templateEngine }
 │   │   ├── queries/           ← read operations, minimal layering
 │   │   └── domain/            ← business rules (required for commands)
 │   │
-│   └── order-dashboard/       ← read-only feature example
-│       ├── entrypoint/
-│       └── queries/           ← no commands/, no domain/ needed
+│   ├── order-dashboard/       ← read-only feature with external API
+│   │   ├── entrypoint/
+│   │   └── queries/
+│   │
+│   └── reporting/             ← internal query library
+│       └── queries/           ← no entrypoint needed, consumed by other features
 │
 ├── platform/
 │   ├── domain/                ← shared business rules
@@ -346,7 +352,7 @@ When designing, implementing, refactoring, or reviewing code, complete this chec
 **Structure:**
 1. [ ] Verify features/, platform/, shell/ exist at the root
 2. [ ] Verify platform/ contains only domain/ and infra/
-3. [ ] Verify each feature contains only entrypoint/, commands/, queries/, domain/ (all optional except entrypoint/)
+3. [ ] Verify each feature contains only entrypoint/, commands/, queries/, domain/ (all optional; entrypoint/ only for external interfaces)
 4. [ ] Verify shell/ contains no business logic
 
 **Commands (write path):**
