@@ -17,6 +17,12 @@ dependency-cruiser statically analyzes your TypeScript imports and validates the
 | `commands-no-cross-feature` | Commands importing from other features |
 | `commands-must-use-domain` | Commands that don't import from their feature's `domain/` (required rule) |
 | `queries-no-commands` | Queries importing from `commands/` |
+| `domain-no-upward-deps` | Domain importing from commands/, queries/, entrypoint/, or shell/ |
+| `shell-no-domain` | Shell importing from domain/ (shell is thin wiring only) |
+| `platform-no-features` | platform/domain/ or platform/infra/ importing from features/ |
+| `commands-no-queries` | Commands importing from queries/ (write path cannot depend on read path) |
+| `no-nested-commands` | Nested folders inside commands/ (should be flat command files only) |
+| `no-nested-queries` | Nested folders inside queries/ (should be flat query files only) |
 | `no-circular` | Circular dependencies anywhere |
 
 Rules that require human judgment (e.g. "commands contain no business rules", "queries never mutate state", "entrypoint is thin") are not automatable and remain in the skill checklist.
@@ -34,6 +40,9 @@ Copy the example configuration below into `.dependency-cruiser.mjs` at your proj
 ```javascript
 export default {
   forbidden: [
+    // --- Structure rules ---
+    // Catches any file at the package root that isn't inside features/, platform/, or shell/.
+    // Adjust the "src/" prefix to match your source layout.
     {
       name: "root-structure",
       severity: "error",
@@ -41,6 +50,8 @@ export default {
       from: { path: "src/(?!features/|platform/|shell/).+" },
       to: {}
     },
+    // platform/ is for shared horizontals. Only two folders allowed: domain/ for shared
+    // business logic and infra/ for external service wrappers.
     {
       name: "platform-structure",
       severity: "error",
@@ -48,6 +59,8 @@ export default {
       from: { path: "platform/(?!domain/|infra/)[^/]+/.+" },
       to: {}
     },
+    // Each feature is a vertical slice. Only four subfolders are allowed.
+    // entrypoint/ (external interface), commands/ (write ops), queries/ (read ops), domain/ (business rules).
     {
       name: "feature-structure",
       severity: "error",
@@ -55,6 +68,27 @@ export default {
       from: { path: "features/[^/]+/(?!entrypoint/|commands/|queries/|domain/)[^/]+/.+" },
       to: {}
     },
+    // commands/ and queries/ must be flat — one file per command/query, no nested folders.
+    // Catches any file inside a subfolder of commands/.
+    {
+      name: "no-nested-commands",
+      severity: "error",
+      comment: "commands/ must be flat — no nested folders",
+      from: { path: "features/[^/]+/commands/[^/]+/.+" },
+      to: {}
+    },
+    // Same for queries/ — flat files only.
+    {
+      name: "no-nested-queries",
+      severity: "error",
+      comment: "queries/ must be flat — no nested folders",
+      from: { path: "features/[^/]+/queries/[^/]+/.+" },
+      to: {}
+    },
+
+    // --- Entrypoint dependency rules ---
+    // Entrypoint is a thin mapping layer. It invokes commands/queries and maps responses.
+    // It must never reach into domain/ directly — that's what commands/ and queries/ are for.
     {
       name: "entrypoint-no-domain",
       severity: "error",
@@ -62,6 +96,8 @@ export default {
       from: { path: "features/[^/]+/entrypoint/.+" },
       to: { path: "(features/[^/]+/domain/|platform/domain/).+" }
     },
+    // Entrypoint can only depend on commands/, queries/, and platform/infra/.
+    // This prevents entrypoint from doing orchestration, data fetching, or business logic.
     {
       name: "entrypoint-restricted-deps",
       severity: "error",
@@ -72,6 +108,22 @@ export default {
         pathNot: "(features/$1/(commands|queries)/|platform/infra/)"
       }
     },
+
+    // --- Domain dependency rules ---
+    // Domain contains business rules. It must not depend on anything above it in the stack.
+    // Commands orchestrate domain, queries read data, entrypoint maps I/O, shell wires things up.
+    // Domain knows about none of them.
+    {
+      name: "domain-no-upward-deps",
+      severity: "error",
+      comment: "Domain must not import from commands/, queries/, entrypoint/, or shell/",
+      from: { path: "features/[^/]+/domain/.+" },
+      to: { path: "(features/[^/]+/(commands|queries|entrypoint)/|shell/).+" }
+    },
+
+    // --- Feature isolation rules ---
+    // Features are independent vertical slices. No feature may import from another.
+    // The $1 capture group ensures imports within the same feature are allowed.
     {
       name: "no-cross-feature-imports",
       severity: "error",
@@ -82,6 +134,8 @@ export default {
         pathNot: "features/$1/.+"
       }
     },
+    // Redundant with no-cross-feature-imports but gives a more specific error message
+    // when the violation originates from a command file.
     {
       name: "commands-no-cross-feature",
       severity: "error",
@@ -92,6 +146,9 @@ export default {
         pathNot: "features/$1/.+"
       }
     },
+
+    // --- Read/write path separation ---
+    // Queries are the read path. Commands are the write path. They must not depend on each other.
     {
       name: "queries-no-commands",
       severity: "error",
@@ -99,6 +156,38 @@ export default {
       from: { path: "features/[^/]+/queries/.+" },
       to: { path: "features/[^/]+/commands/.+" }
     },
+    {
+      name: "commands-no-queries",
+      severity: "error",
+      comment: "Commands must not import from queries/",
+      from: { path: "features/[^/]+/commands/.+" },
+      to: { path: "features/[^/]+/queries/.+" }
+    },
+
+    // --- Shell rules ---
+    // Shell is thin wiring/routing only. It must not import domain logic.
+    // Shell re-exports the public API — it can import from entrypoint/, commands/, queries/,
+    // and platform/infra/, but not from domain/.
+    {
+      name: "shell-no-domain",
+      severity: "error",
+      comment: "Shell must not import from domain/",
+      from: { path: "shell/.+" },
+      to: { path: "(features/[^/]+/domain/|platform/domain/).+" }
+    },
+
+    // --- Platform rules ---
+    // Platform provides shared horizontals. It must never depend on features/ —
+    // that would invert the dependency direction.
+    {
+      name: "platform-no-features",
+      severity: "error",
+      comment: "Platform must not import from features/",
+      from: { path: "platform/.+" },
+      to: { path: "features/.+" }
+    },
+
+    // --- General ---
     {
       name: "no-circular",
       severity: "error",
@@ -109,6 +198,9 @@ export default {
   ],
 
   required: [
+    // Commands orchestrate write operations. They MUST go through the domain layer —
+    // that's the entire point. A command that doesn't import from domain/ is either
+    // doing business logic inline (violation) or doing nothing useful.
     {
       name: "commands-must-use-domain",
       severity: "error",
