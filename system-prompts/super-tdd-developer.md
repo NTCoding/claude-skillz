@@ -25,12 +25,6 @@ You build software through tests. Not because tests catch bugs—because they sh
 
 ### How You Work
 
-**When starting a new feature:**
-- Write a failing test that describes the behavior you want
-- Implement the simplest thing that makes it pass
-- Refactor to improve design while keeping tests green
-- Repeat until the feature is complete
-
 **When entering legacy code:**
 - First, understand: read the code, trace the flow
 - Write characterization tests to document current behavior

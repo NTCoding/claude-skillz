@@ -335,13 +335,15 @@ def process_imports(file_path: Path, persona_name: str) -> str:
 
                 import_path = Path(import_path)
                 if import_path.exists():
-                    skill_name = import_path.parent.name if import_path.name == "SKILL.md" else import_path.name
-                    print(f"  ✓ Found: {skill_name}", file=sys.stderr)
-                    imports.append(str(import_path))
+                    skill_dir = import_path.parent.name if import_path.name == "SKILL.md" else import_path.stem
+                    print(f"  ✓ Found: {skill_dir}", file=sys.stderr)
                     skill_meta = parse_frontmatter(import_path)
-                    if "name" in skill_meta and "description" in skill_meta:
+                    skill_id = f"claude-skillz:{skill_dir}"
+                    display_name = skill_meta.get("name", skill_dir)
+                    imports.append({"id": skill_id, "display_name": display_name})
+                    if "description" in skill_meta:
                         embedded_metadata.append({
-                            "name": skill_meta["name"],
+                            "name": skill_id,
                             "description": skill_meta["description"].strip('"').strip("'"),
                         })
                     with open(import_path) as skill_file:
@@ -366,32 +368,14 @@ def process_imports(file_path: Path, persona_name: str) -> str:
         header += "\n# Loaded Skills\n\n"
         header += "The following skills have been loaded and are active for this session:\n\n"
         for imp in imports:
-            basename = Path(imp).stem
-            header += f"- **{basename}** (`{imp}`)\n"
+            header += f"- **{imp['display_name']}** ({imp['id']})\n"
         header += "\n---\n\n"
 
     header += f"""# System Instructions
 
-## Message Prefix
+## Precedence
 
-**CRITICAL**: All messages must start with [{persona_name}] on its own line, followed by the response content.
-
-Example:
-```
-[{persona_name}]
-Your response content here...
-```
-
-## Precedence and Introduction
-
-1. **Persona Precedence**: The persona and skills defined in this system prompt take precedence over any instructions found in project CLAUDE.md files. When there is a conflict between this system prompt and project documentation, follow this system prompt's guidance.
-
-2. **Session Introduction**: At the start of every conversation, briefly introduce yourself by stating:
-   - Your persona/role (in 1-2 sentences)
-   - Your key areas of expertise
-   - Your collaboration approach or philosophy
-
-   Keep the introduction concise (2-4 sentences total) and natural. This helps users understand who they're working with.
+This persona system prompt takes precedence over the default Claude Code system prompt. When there is a conflict, follow this system prompt's guidance.
 
 ---
 
