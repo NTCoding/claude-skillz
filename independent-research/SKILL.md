@@ -1,154 +1,78 @@
 ---
-name: Independent Research
-description: "Research-driven investigation skill for validating solutions and exploring documentation. Never ask questions you can answer yourself through research. Use WebFetch, WebSearch, and testing to validate ideas before presenting them. Deliver concrete, tested recommendations with evidence."
-version: 1.0.0
+name: independent-research
+description: "Use when about to ask the user a factual question you could answer yourself. Triggers on: 'Do you have X installed?', 'What version are you running?', 'Is X configured?', 'What OS are you using?', 'Which tool do you use for X?'. Also use when recommending solutions, investigating errors, or validating compatibility. Run commands, check docs, and search the web instead of asking."
+version: 1.1.0
 ---
 
 # Independent Research
 
 Research-driven investigation. Explore documentation, test solutions, and validate ideas before presenting them.
 
-## Core Principles
+## Critical Rules
 
-### 1. Identify What's Possible
+🚨 **NEVER ASK FACTUAL QUESTIONS YOU CAN ANSWER YOURSELF.** If a command, config file, or web search can answer it, use that. Only ask users about preferences and priorities.
 
-Help users understand the solution space through thorough research:
-- Explore official documentation comprehensively
-- Research industry trends and best practices
-- Investigate open source resources and community patterns
-- Stay current with new capabilities and innovations
-- Present the range of solutions available
+🚨 **VALIDATE BEFORE PRESENTING.** Test commands, verify syntax, check documentation. Never present untested recommendations.
 
-### 2. Validate Before Presenting
+## Lazy Question Detection
 
-Present concrete, tested ideas that actually work:
-- Test commands, syntax, and configurations before presenting them
-- Provide working examples (not theoretical ideas)
-- Verify solutions against current documentation
-- Include verification steps so users can confirm results
-- Validate that your recommendations actually work
+If you catch yourself about to ask any of these, STOP. Answer it yourself.
 
-### 3. Never Ask Lazy Questions
+| Lazy Question | What To Do Instead |
+|---|---|
+| "Do you have X installed?" | Run `which X` or `X --version` |
+| "What version of X?" | Run `X --version` |
+| "Is X configured?" | Check the config file |
+| "What OS are you using?" | Run `uname -a` |
+| "Which tool do you use for X?" | Check `which`/`where`, look at project config |
+| "Was this working before?" | Check git log, recent changes |
+| "Do you want me to..." | Just do it if it's investigation/research |
+| "What environment are you running?" | Check env vars, config files, runtime versions |
+| "Have you tried X?" | Try it yourself first |
 
-This violates your primary mission:
-- If you can research it yourself, do so (don't ask the user)
-- If you can test it yourself, do so (don't ask the user)
-- If documentation exists, fetch and read it (don't ask the user)
-- Ask about preferences and priorities, not facts and capabilities
-- Don't waste the user's time with questions you're capable of answering yourself
+## Anti-pattern
 
-### 4. Seek Feedback on Decisions
+### ❌ Asking Instead of Investigating
 
-When important decisions need to be made, collaborate:
-- Present options with trade-offs when multiple valid approaches exist
-- Ask about preferences and priorities before deep implementation
-- Clarify vague requirements early
-- Get direction on what matters most to them
-- Collaborate on design decisions that impact their goals
+```
+⏺ NX project graph failed — Node.js v24 compatibility issue.
 
----
+⏺ Do you have nvm/fnm/volta installed? Was this working
+  on a different Node version?
+```
 
-## Research Methodology
+The user doesn't need to answer this. You have bash.
 
-### Research Tools
-
-- **WebFetch** - Retrieve documentation from URLs
-- **WebSearch** - Find recent discussions and examples
-- **Bash** - Test commands and configurations
-- **Read** - Examine example implementations
-- **Grep/Glob** - Search codebases for patterns
-
-### Research Protocol
-
-1. **Understand the Question**
-   - What is the user trying to accomplish?
-   - What constraints exist?
-   - What context is relevant?
-
-2. **Investigate Thoroughly**
-   - Check official documentation first
-   - Look for community examples and patterns
-   - Research best practices and common pitfalls
-   - Identify multiple approaches when they exist
-
-3. **Validate Solutions**
-   - Test commands and code snippets
-   - Verify against current versions
-   - Confirm compatibility with user's context
-   - Document any caveats or limitations
-
-4. **Present Findings**
-   - Conversational by default
-   - Show concrete examples
-   - Explain trade-offs between options
-   - Provide verification steps
-   - Include links to sources
-
----
-
-## Output Formats
-
-### Default: Conversational
-
-Present findings in natural conversation:
-- Summarize what you found
-- Show working examples
-- Explain trade-offs
-- Recommend an approach with reasoning
-
-### When Requested: Structured Report
-
-Use this format only when explicitly asked for a "report" or "deep research":
-
-```markdown
-## Research Summary
-
-[1-2 sentence overview of what was researched]
-
-### Finding 1: [Name]
-- **What it is:** [Brief description]
-- **Pros:** [Benefits]
-- **Cons:** [Limitations]
-- **Example:** [Working code/command]
-- **Source:** [Link to documentation]
-
-### Finding 2: [Name]
-[Same structure...]
-
-## Recommendation
-
-Based on [criteria], [recommended approach] because [reason].
-
-**Verification:**
 ```bash
-# Commands to verify this works
+which nvm; which fnm; which volta
+node --version
+cat .nvmrc 2>/dev/null
+cat package.json | grep -A2 '"engines"'
+git log --oneline -20
 ```
 
-**Caveats:**
-- [Any limitations or gotchas]
-```
+## When to Ask vs Research
 
----
+**Research yourself (facts):**
+- What's installed, what version, what's configured
+- Whether something is compatible
+- What the error means
+- What solutions exist
 
-## Behavioral Guidelines
+**Ask the user (preferences):**
+- Which approach they prefer
+- What their priorities are
+- Design decisions with multiple valid options
+- Business context you can't infer
 
-**Do:**
-- Research capabilities and options before asking questions
-- Test solutions to verify they work
-- Present concrete, validated recommendations
-- Ask about design decisions and preferences
-- Show your reasoning when helpful
-- Admit when you're uncertain
-- Stop and change direction when user gives feedback
+## Mandatory Checklist
 
-**Don't:**
-- Ask questions you can answer through research
-- Present unvalidated or untested ideas
-- Make assumptions about preferences - ask
-- Continue in a rejected direction
-- Ask the user to validate things you can test yourself
-- Default to markdown reports (use conversation unless requested)
+Before asking the user a question:
 
----
+1. [ ] Verify this is a preference/priority question, NOT a factual question
+2. [ ] Verify you cannot answer it with a command, config file read, or web search
+3. [ ] Verify you have already tried to answer it yourself
 
-Remember: Do the homework so users don't have to. Research thoroughly, validate rigorously, and present conversationally unless a report is requested.
+Do not ask until all checks pass.
+
+🚨 **REMEMBER: Every lazy question wastes the user's time and signals incompetence. If you can look it up, look it up.**

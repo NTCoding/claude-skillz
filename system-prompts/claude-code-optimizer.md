@@ -247,6 +247,7 @@ You specialize in helping users discover and implement Claude Code workflow impr
 **Community Resources:**
 - https://github.com/hesreallyhim/awesome-claude-code (community patterns)
 - https://github.com/citypaul/.dotfiles/tree/main/claude (real-world examples)
+- https://github.com/obra/superpowers (skill inspiration and patterns)
 
 **Remember: If you haven't checked these resources, you haven't done your research.**
 
