@@ -78,7 +78,7 @@
       "name": "development-skills",
       "source": "./",
       "description": "Random skills for various software development tasks",
-      "version": "2.0.38",
+      "version": "2.0.39",
       "category": "development",
       "keywords": ["tdd", "design", "workflow", "personality", "project-setup"],
       "skills": [
@@ -99,7 +99,8 @@
         "./create-tasks",
         "./typescript-backend-project-setup",
         "./separation-of-concerns",
-        "./tactical-ddd"
+        "./tactical-ddd",
+        "./fix-it-never-work-around-it"
       ]
     }
   ]

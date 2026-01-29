@@ -8,7 +8,6 @@ version: 3.0.9
 
 > 🚨 **DO NOT USE PLAN MODE.** This skill IS the plan. Follow the steps exactly as written.
 
-> 🚨 **FAIL FAST:** If ANYTHING unexpected happens or you need to do something NOT in this skill, STOP and discuss with the user. Do not improvise or add extra steps. Update this skill instead.
 
 > ⚠️ **Check NX docs for latest conventions:** https://nx.dev/docs/getting-started/start-new-project
 > NX evolves quickly. Verify these instructions against current NX best practices before use.

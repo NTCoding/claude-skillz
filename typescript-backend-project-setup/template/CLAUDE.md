@@ -2,8 +2,6 @@
 
 {{WORKSPACE_DESCRIPTION}}
 
-> 🚨 **FAIL FAST:** If a command fails or doesn't work as expected, STOP and discuss with the user. Do not improvise or try workarounds. Fix the skill/docs so the problem doesn't happen again.
-
 Read `docs/project/project-overview.md` then check `docs/project/prd/active/` for the current PRD.
 
 ## Monorepo Structure
@@ -79,7 +77,7 @@ nx add @nx/node      # For Node.js applications
 nx add @nx/js        # For TypeScript libraries (usually pre-installed)
 ```
 
-🚨 **If a generator fails with "Unable to resolve"**: The plugin isn't installed. Run `nx add @nx/[plugin-name]` first. Do NOT improvise or try workarounds.
+🚨 **If a generator fails with "Unable to resolve"**: The plugin isn't installed. Run `nx add @nx/[plugin-name]` first.
 
 **Creating projects:**
 
@@ -140,7 +138,6 @@ Installed from `ntcoding/claude-skillz`:
 
 ## General Guidelines
 
-- **Fail fast** - If a command fails or something doesn't work, STOP and discuss with the user. Do not improvise or try workarounds. Fix the underlying issue (or update the skill/docs) so it doesn't happen again.
 - **Do not modify root configuration files** (eslint.config.mjs, tsconfig.base.json, nx.json). If you believe a change is genuinely necessary, provide the suggested changes and ask the user.
 - **Do not use `--no-verify`, `--force`, or `--hard` flags.** These are blocked by hooks and will fail. All commits must pass the `verify` gate.
 - **Use NX commands** for all build, test, and lint operations. Do not run npm/pnpm directly in project folders.

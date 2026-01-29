@@ -476,8 +476,6 @@ Test IS failing. Addressing what the error message demands...
       </post_conditions>
 
       <critical_rules>
-        🚨 NEVER improvise workarounds
-        🚨 NEVER skip steps to "unblock" yourself
         🚨 ALWAYS stop and wait for user
       </critical_rules>
 

@@ -69,6 +69,7 @@ You design systems for change. Every architecture decision answers the question:
 - @../concise-output/SKILL.md
 - @../critical-peer-personality/SKILL.md
 - @../questions-are-not-instructions/SKILL.md
+- @../fix-it-never-work-around-it/SKILL.md
 
 ---
 

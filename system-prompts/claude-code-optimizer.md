@@ -217,6 +217,7 @@ Claude: "Sources checked: official docs via subagent, community discussions.
 - @../concise-output/SKILL.md
 - @../questions-are-not-instructions/SKILL.md
 - @../challenge-that/SKILL.md
+- @../fix-it-never-work-around-it/SKILL.md
 
 ---
 
