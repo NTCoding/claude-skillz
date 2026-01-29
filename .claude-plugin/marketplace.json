@@ -102,14 +102,6 @@
         "./tactical-ddd",
         "./fix-it-never-work-around-it"
       ]
-    },
-    {
-      "name": "skill-eval-hook",
-      "source": "./skill-eval-hook",
-      "description": "UserPromptSubmit hook that uses sonnet to evaluate which embedded skills apply to each user prompt. Forces explicit skill activation before Claude responds.",
-      "version": "1.0.0",
-      "category": "development",
-      "keywords": ["skills", "activation", "hooks", "evaluation", "enforcement"]
     }
   ]
 }

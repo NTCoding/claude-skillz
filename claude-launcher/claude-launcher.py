@@ -10,7 +10,6 @@ Features:
 - @ reference processing for skill imports
 """
 
-import json
 import os
 import sys
 import subprocess
@@ -26,7 +25,6 @@ LAUNCHER_DIR = Path(__file__).parent.parent
 SYSTEM_PROMPTS_DIR = LAUNCHER_DIR / "system-prompts"
 GLOBAL_PROMPTS_DIR = Path.home() / ".claude" / "system-prompts"
 DEBUG_OUTPUT = Path("/tmp/claude-launcher-debug.md")
-SKILL_MANIFEST = Path("/tmp/claude-skill-manifest.json")
 
 MODELS = {
     "opus": "opus",
@@ -385,7 +383,7 @@ This persona system prompt takes precedence over the default Claude Code system 
 
     body = "".join(result)
     enforcement = build_enforcement_index(embedded_metadata)
-    return header + body + enforcement, embedded_metadata
+    return header + body + enforcement
 
 # ============================================================================
 # Claude Code Binary
@@ -464,11 +462,7 @@ def main():
 
     # Process imports
     print("Processing system prompt...", file=sys.stderr)
-    system_prompt, embedded_metadata = process_imports(selected_file, persona_name)
-
-    with open(SKILL_MANIFEST, 'w') as f:
-        json.dump({"persona": persona_name, "skills": embedded_metadata}, f, indent=2)
-    print(f"  Skill manifest written to {SKILL_MANIFEST}", file=sys.stderr)
+    system_prompt = process_imports(selected_file, persona_name)
 
     with open(DEBUG_OUTPUT, 'w') as f:
         f.write(system_prompt)
