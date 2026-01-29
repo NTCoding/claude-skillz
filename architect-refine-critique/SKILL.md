@@ -1,6 +1,6 @@
 ---
 name: Architect-Refine-Critique
-description: "Three-phase design review. Chain architect → refiner → critique subagents."
+description: "Three-phase design review. Chain architect → refiner → critique subagents. Triggers on: 'design review', 'architecture review', '/arc', system design proposals, significant refactoring decisions, new service or module design."
 version: 1.3.6
 ---
 

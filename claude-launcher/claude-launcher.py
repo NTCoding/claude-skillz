@@ -15,7 +15,7 @@ import sys
 import subprocess
 import re
 from pathlib import Path
-from typing import Dict, Tuple, Optional
+from typing import Dict, List, Tuple, Optional
 
 # ============================================================================
 # Configuration
@@ -60,6 +60,24 @@ def parse_frontmatter(file_path: Path) -> Dict[str, str]:
         print(f"Error parsing {file_path}: {e}", file=sys.stderr)
 
     return metadata
+
+
+def build_enforcement_index(embedded_metadata: List[Dict[str, str]]) -> str:
+    if not embedded_metadata:
+        return ""
+
+    lines = [
+        "\n---\n",
+        "\n## Skill Activation Protocol\n",
+        f"You have {len(embedded_metadata)} embedded skills. They are ALL active for this session.",
+        "Follow every embedded skill completely. They are mandatory, not suggestions.",
+        "If you catch yourself violating a skill, STOP, re-read it, and correct course.",
+        "If there is even a 1% chance a skill applies to what you are doing, you MUST follow it.\n",
+        "### Embedded Skills\n",
+    ]
+    for meta in embedded_metadata:
+        lines.append(f"- **{meta['name']}**: {meta['description']}")
+    return "\n".join(lines) + "\n"
 
 
 def load_prompts() -> Tuple[Dict[str, Path], Dict[str, Path]]:
@@ -295,38 +313,37 @@ def process_imports(file_path: Path, persona_name: str) -> str:
     """
     result = []
     imports = []
+    embedded_metadata = []
     errors = []
 
     with open(file_path) as f:
-        # Skip frontmatter if present
         first_line = f.readline().strip()
         if first_line == "---":
-            # Skip until closing ---
             for line in f:
                 if line.strip() == "---":
                     break
         else:
-            # No frontmatter, process this line
             result.append(first_line + "\n")
 
-        # Process remaining content
         for line in f:
-            # Check for @ reference at start of line (with optional - and whitespace)
             match = re.match(r'^\s*-?\s*@([^\s]+)\s*$', line)
             if match:
                 import_path = match.group(1)
-                # Expand ~ to home
                 import_path = import_path.replace("~", str(Path.home()))
-                # Resolve relative paths relative to the file's directory
                 if not import_path.startswith("/"):
                     import_path = str(file_path.parent / import_path)
 
                 import_path = Path(import_path)
                 if import_path.exists():
-                    # Show parent directory name (skill name) instead of just filename
                     skill_name = import_path.parent.name if import_path.name == "SKILL.md" else import_path.name
                     print(f"  ✓ Found: {skill_name}", file=sys.stderr)
                     imports.append(str(import_path))
+                    skill_meta = parse_frontmatter(import_path)
+                    if "name" in skill_meta and "description" in skill_meta:
+                        embedded_metadata.append({
+                            "name": skill_meta["name"],
+                            "description": skill_meta["description"].strip('"').strip("'"),
+                        })
                     with open(import_path) as skill_file:
                         result.append(skill_file.read())
                         result.append("\n\n")
@@ -342,7 +359,6 @@ def process_imports(file_path: Path, persona_name: str) -> str:
             print(f"  - {err}", file=sys.stderr)
         sys.exit(1)
 
-    # Build header with manifest
     header = "---\n"
 
     if imports:
@@ -354,7 +370,6 @@ def process_imports(file_path: Path, persona_name: str) -> str:
             header += f"- **{basename}** (`{imp}`)\n"
         header += "\n---\n\n"
 
-    # Add system instructions
     header += f"""# System Instructions
 
 ## Message Prefix
@@ -382,7 +397,9 @@ Your response content here...
 
 """
 
-    return header + "".join(result)
+    body = "".join(result)
+    enforcement = build_enforcement_index(embedded_metadata)
+    return header + body + enforcement
 
 # ============================================================================
 # Claude Code Binary

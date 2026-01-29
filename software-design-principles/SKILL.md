@@ -1,6 +1,6 @@
 ---
 name: Software Design Principles
-description: "Object-oriented design principles including object calisthenics, dependency inversion, fail-fast error handling, feature envy detection, and intention-revealing naming. Activates during code refactoring, design reviews, or when user requests design improvements."
+description: "Object-oriented design principles including object calisthenics, dependency inversion, fail-fast error handling, feature envy detection, and intention-revealing naming. Triggers on: writing new classes or functions, refactoring, code review, 'clean up', method longer than 10 lines, feature envy, primitive obsession, deep nesting."
 version: 1.0.0
 ---
 

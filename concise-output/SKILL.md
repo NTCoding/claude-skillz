@@ -1,6 +1,6 @@
 ---
 name: Concise Output
-description: "Enforces brevity and signal-over-noise in all outputs. Eliminates verbose explanations, filler phrases, and unnecessary elaboration. Use when documentation, artifacts, or responses need to be maximally concise and actionable."
+description: "Enforces brevity and signal-over-noise in all outputs. Eliminates verbose explanations, filler phrases, and unnecessary elaboration. Triggers on: every response (governs output length and density when loaded)."
 version: 1.0.0
 ---
 

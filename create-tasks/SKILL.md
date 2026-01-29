@@ -1,6 +1,6 @@
 ---
 name: create-tasks
-description: "Creates well-formed tasks following a template that engineers can implement. Use when creating tasks, defining work items, creating tasks from PRD, breaking down features, or converting requirements into actionable tasks."
+description: "Creates well-formed tasks following a template that engineers can implement. Triggers on: 'create tasks', 'define work items', 'break this down', creating tasks from PRD, converting requirements into actionable tasks, feature breakdown, sprint planning."
 version: 1.0.0
 ---
 
