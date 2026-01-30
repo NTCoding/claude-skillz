@@ -75,18 +75,10 @@
       "keywords": ["architecture", "design-review", "refactoring", "ddd", "separation-of-concerns"]
     },
     {
-      "name": "session-optimizer",
-      "source": "./session-optimizer",
-      "description": "Analyze session transcripts for optimization opportunities using 4 parallel subagents",
-      "version": "1.0.0",
-      "category": "productivity",
-      "keywords": ["optimization", "session-analysis", "efficiency", "skills", "improvement"]
-    },
-    {
       "name": "development-skills",
       "source": "./",
       "description": "Random skills for various software development tasks",
-      "version": "2.2.0",
+      "version": "2.3.0",
       "category": "development",
       "keywords": ["tdd", "design", "workflow", "personality", "project-setup"],
       "skills": [
