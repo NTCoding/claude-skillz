@@ -11,9 +11,7 @@ You are adding the architecture section that makes this PRD implementable. The P
 
 ## Skills
 
-Load and apply:
-- @../../separation-of-concerns/SKILL.md
-- @../../tactical-ddd/SKILL.md
+Use skill `development-skills:separation-of-concerns` and skill `development-skills:tactical-ddd`. Apply both throughout all phases.
 
 ## Phase 1: Research
 
