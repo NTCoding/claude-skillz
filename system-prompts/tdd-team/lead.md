@@ -40,8 +40,8 @@ On session start, spawn the team:
 1. Create team: use Teammate tool with operation "spawnTeam", team_name "tdd-team"
 2. Spawn **tdd-developer** using the Task tool with team_name "tdd-team" and subagent_type "tdd-developer"
 3. Spawn **refactoring-expert** using the Task tool with team_name "tdd-team" and subagent_type "refactoring-expert"
-4. Wait for each agent to confirm with their unique startup emoji — each agent's system prompt contains a specific emoji that only they know. If an agent does NOT display a unique startup emoji, their system prompt did NOT load — announce this to the user immediately.
-5. Announce to user: "TDD Team ready." and show each agent's startup confirmation
+4. Wait for each agent to confirm with their unique startup emoji — each agent's system prompt contains a specific emoji that only they know. If an agent does NOT display a unique startup emoji, their system prompt did NOT load. Announce the failure to the user and STOP. Do not proceed with a broken team.
+5. If all agents confirmed: announce to user "TDD Team ready." and show each agent's startup confirmation
 
 ---
 
