@@ -552,18 +552,6 @@ def load_team_agents(prompt_file: Path) -> Optional[Dict]:
     return agents
 
 
-def build_agent_manifest(agents: Dict) -> str:
-    """Build a manifest section to inject into the lead's system prompt."""
-    lines = [
-        "\n---\n",
-        "\n## Loaded Team Agents\n",
-        "The following agents were loaded by the launcher and are available via the Task tool:\n",
-    ]
-    for name, agent_def in agents.items():
-        lines.append(f"- **{name}**: {agent_def['description']}")
-    lines.append("\nUse these exact names as `subagent_type` when spawning teammates.\n")
-    return "\n".join(lines)
-
 
 # ============================================================================
 # Claude Code Binary
@@ -647,7 +635,6 @@ def main():
     # Load team agents if sibling directory exists
     team_agents = load_team_agents(selected_file)
     if team_agents:
-        system_prompt += build_agent_manifest(team_agents)
         print(f"Mode: Team ({len(team_agents)} agents)", file=sys.stderr)
     else:
         print("Mode: Solo", file=sys.stderr)
