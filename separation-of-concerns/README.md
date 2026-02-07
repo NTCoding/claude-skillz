@@ -23,6 +23,8 @@ dependency-cruiser statically analyzes your TypeScript imports and validates the
 | `commands-no-queries` | Commands importing from queries/ (write path cannot depend on read path) |
 | `no-nested-commands` | Nested folders inside commands/ (should be flat command files only) |
 | `no-nested-queries` | Nested folders inside queries/ (should be flat query files only) |
+| `no-root-infra-files` | Files at infra/ root (all files must be in sub-folders) |
+| `no-root-platform-infra-files` | Files at platform/infra/ root (all files must be in sub-folders) |
 | `no-circular` | Circular dependencies anywhere |
 
 Rules that require human judgment (e.g. "commands contain no business rules", "queries never mutate state", "entrypoint is thin") are not automatable and remain in the skill checklist.
@@ -83,6 +85,22 @@ export default {
       severity: "error",
       comment: "queries/ must be flat — no nested folders",
       from: { path: "features/[^/]+/queries/[^/]+/.+" },
+      to: {}
+    },
+    // infra/ must be organized into sub-folders. No files at infra/ root.
+    {
+      name: "no-root-infra-files",
+      severity: "error",
+      comment: "infra/ files must be in sub-folders (mappers/, persistence/, middleware/)",
+      from: { path: "features/[^/]+/infra/[^/]+\\.ts$" },
+      to: {}
+    },
+    // Same for platform/infra/ — all files must be in standard sub-folders.
+    {
+      name: "no-root-platform-infra-files",
+      severity: "error",
+      comment: "platform/infra/ files must be in sub-folders (external-clients/, persistence/, http/, etc.)",
+      from: { path: "platform/infra/[^/]+\\.ts$" },
       to: {}
     },
 

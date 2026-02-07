@@ -261,6 +261,8 @@ Generic wrappers for external services (APIs, databases, SDKs) live separately f
 
 **What:** All infra/ directories (feature and platform) use standard sub-folders. Only add non-standard sub-folders when logic genuinely doesn't fit these locations.
 
+🚨 **CRITICAL:** No files at infra/ root. Everything must be in a sub-folder. Dumping files at `infra/file.ts` is forbidden.
+
 ### feature/infra/ sub-folders
 
 | Sub-folder | Contains |
