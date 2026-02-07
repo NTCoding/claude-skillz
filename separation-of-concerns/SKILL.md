@@ -20,9 +20,12 @@ version: 5.0.0
 - `platform/` — horizontals, contains `domain/` and `infra/`
   - domain/ depends on nothing — never imports from infra/
   - infra/ CAN depend on domain/ (implements domain contracts)
-- `shell/` — thin wiring/routing only (no business logic)
+- `shell/` — app wiring/routing only (no business logic). Registers routes, bootstraps frameworks, connects message brokers. **Not a package entry point** — libraries use `src/index.ts` for that.
+- `src/index.ts` — library package entry point. Pure barrel file (only re-export statements, no logic). Only needed for packages consumed by other packages.
 
 **Note on terminology:** CLI subcommands (like `git commit`) are wired in shell/. Write operations in commands/ are CQRS commands — different concepts.
+
+### Application structure
 
 ```
 features/              platform/              shell/
@@ -42,6 +45,25 @@ features/              platform/              shell/
     └── domain/
 ```
 
+### Library package structure
+
+Libraries use the same `features/` + `platform/` structure. The package is NOT the feature — still wrap in `features/{name}/`. Libraries don't need `shell/` unless they wire an app.
+
+```
+src/
+├── index.ts               ← barrel (pure re-exports, no logic)
+├── features/
+│   └── extraction/
+│       ├── queries/
+│       ├── domain/
+│       └── infra/
+└── platform/
+    ├── domain/
+    └── infra/
+```
+
+Small utility/config/schema packages with no domain logic may be excluded from this architecture entirely.
+
 ---
 
 ## SoC-001: Always follow the code placement decision tree
@@ -56,7 +78,7 @@ Registers routes, bootstraps a framework, connects to a message broker, register
 
 **Test:** If you deleted this code, would the app still have all its logic but no way to start?
 
-❌ **Not shell/ if:** It parses input, formats output, contains business logic, or loads/saves data. Those are deeper layers.
+❌ **Not shell/ if:** It parses input, formats output, contains business logic, or loads/saves data. Those are deeper layers. Also not shell/ if it's a package barrel file re-exporting types for consumers — that's `src/index.ts`.
 
 ### Q2: Does it translate between external and internal formats?
 
@@ -145,6 +167,7 @@ Platform/infra/ includes both generic utilities and project-specific conventions
 | queries/ | domain/ (read-only), platform/infra/, platform/domain/, own feature/infra/ | entrypoint/, commands/ |
 | domain/ | platform/domain/ | all infra/ (feature or platform), entrypoint/, commands/, queries/ |
 | shell/ | entrypoint/ (to wire routes) | commands/, queries/, domain/ directly |
+| src/index.ts (barrel) | any internal module (re-exports only) | must not contain logic |
 
 ---
 
