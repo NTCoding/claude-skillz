@@ -31,9 +31,10 @@ features/              platform/              shell/
 │   ├── commands/      └── infra/
 │   ├── queries/           ├── external-clients/
 │   ├── domain/            ├── http/
-│   └── infra/             ├── persistence/
-│       ├── mappers/       ├── config/
-│       └── persistence/   └── logging/
+│   └── infra/             ├── cli/
+│       ├── mappers/       ├── persistence/
+│       └── persistence/   ├── config/
+│                          └── logging/
 └── refunds/
     ├── entrypoint/
     ├── commands/
@@ -275,10 +276,11 @@ Generic wrappers for external services (APIs, databases, SDKs) live separately f
 
 | Sub-folder | Contains |
 |---|---|
-| `external-clients/` | Third-party service wrappers (Stripe, SendGrid, AWS SDKs) |
+| `external-clients/` | Third-party service wrappers (Stripe, SendGrid, AWS SDKs). NOT for stdin/stdout or OS-level I/O — those go in `cli/` or `http/` |
 | `middleware/` | Shared middleware used across features (auth, CORS, request logging) |
 | `persistence/` | Database clients, connection pools, shared query builders |
-| `http/` | Shared formatters, error handling middleware, response utilities |
+| `http/` | Shared HTTP formatters, error handling middleware, response utilities |
+| `cli/` | CLI I/O utilities (stdin readers, terminal formatting, TTY detection, arg parsing helpers, progress bars) |
 | `messaging/` | Queue clients, event bus, pub/sub infrastructure |
 | `config/` | Configuration loading, environment variable parsing |
 | `logging/` | Structured logging, log formatters |
@@ -292,6 +294,7 @@ Which layers can access which infra sub-folders:
 | `persistence/` | ❌ | ✅ | ✅ | ❌ |
 | `external-clients/` | ❌ | ✅ | ✅ | ❌ |
 | `http/` | ✅ | ❌ | ✅ | ❌ |
+| `cli/` | ✅ | ❌ | ❌ | ❌ |
 | `messaging/` | ✅ | ✅ | ❌ | ❌ |
 | `config/` | ✅ | ✅ | ✅ | ❌ |
 | `logging/` | ✅ | ✅ | ✅ | ❌ |

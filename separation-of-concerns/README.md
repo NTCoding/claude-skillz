@@ -21,6 +21,8 @@ dependency-cruiser statically analyzes your TypeScript imports and validates the
 | `shell-no-domain` | Shell importing from domain/ (shell is thin wiring only) |
 | `platform-no-features` | platform/domain/ or platform/infra/ importing from features/ |
 | `commands-no-queries` | Commands importing from queries/ (write path cannot depend on read path) |
+| `commands-no-infra-cli` | Commands importing from infra/cli/ (CLI utilities are for entrypoints only) |
+| `queries-no-infra-cli` | Queries importing from infra/cli/ (CLI utilities are for entrypoints only) |
 | `no-nested-commands` | Nested folders inside commands/ (should be flat command files only) |
 | `no-nested-queries` | Nested folders inside queries/ (should be flat query files only) |
 | `no-root-infra-files` | Files at infra/ root (all files must be in sub-folders) |
@@ -180,6 +182,24 @@ export default {
       comment: "Commands must not import from queries/",
       from: { path: "features/[^/]+/commands/.+" },
       to: { path: "features/[^/]+/queries/.+" }
+    },
+
+    // --- Infra sub-folder access rules ---
+    // cli/ utilities (stdin readers, terminal formatting, TTY detection) are protocol-level
+    // concerns that only entrypoints should use. Commands and queries operate below that layer.
+    {
+      name: "commands-no-infra-cli",
+      severity: "error",
+      comment: "Commands must not import from infra/cli/ — CLI utilities are for entrypoints only",
+      from: { path: "features/[^/]+/commands/.+" },
+      to: { path: "(features/[^/]+/infra/cli/|platform/infra/cli/).+" }
+    },
+    {
+      name: "queries-no-infra-cli",
+      severity: "error",
+      comment: "Queries must not import from infra/cli/ — CLI utilities are for entrypoints only",
+      from: { path: "features/[^/]+/queries/.+" },
+      to: { path: "(features/[^/]+/infra/cli/|platform/infra/cli/).+" }
     },
 
     // --- Shell rules ---
