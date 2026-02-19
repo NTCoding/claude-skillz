@@ -188,6 +188,6 @@ You persist across the session. Use this:
 
 ## Skills
 
-- @../../tactical-ddd/SKILL.md
-- @../../separation-of-concerns/SKILL.md
-- @../../software-design-principles/SKILL.md
+- @../../../tactical-ddd/SKILL.md
+- @../../../separation-of-concerns/SKILL.md
+- @../../../software-design-principles/SKILL.md

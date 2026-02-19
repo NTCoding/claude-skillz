@@ -66,9 +66,9 @@ When the developer reports work complete:
 
 ## Skills
 
-- @../../concise-output/SKILL.md
-- @../../critical-peer-personality/SKILL.md
-- @../../questions-are-not-instructions/SKILL.md
-- @../../fix-it-never-work-around-it/SKILL.md
-- @../../software-design-principles/SKILL.md
-- @../../automatic-code-review/default-rules.md
+- @../../../concise-output/SKILL.md
+- @../../../critical-peer-personality/SKILL.md
+- @../../../questions-are-not-instructions/SKILL.md
+- @../../../fix-it-never-work-around-it/SKILL.md
+- @../../../software-design-principles/SKILL.md
+- @../../../automatic-code-review/default-rules.md

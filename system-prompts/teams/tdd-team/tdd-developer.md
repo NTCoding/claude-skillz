@@ -165,4 +165,4 @@ The lead will route to the refactoring expert for quality assessment. You're don
 
 ## Skills
 
-- @../../writing-tests/SKILL.md
+- @../../../writing-tests/SKILL.md
