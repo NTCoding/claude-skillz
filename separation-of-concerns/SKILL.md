@@ -1,7 +1,7 @@
 ---
 name: separation-of-concerns
 description: "Enforces code organization using features/ (verticals), platform/ (horizontals), and shell/ (thin wiring). Triggers on: code organization, file structure, where does this belong, new file creation, refactoring."
-version: 5.0.0
+version: 5.1.0
 ---
 
 # Separation of Concerns
@@ -291,6 +291,7 @@ Generic wrappers for external services (APIs, databases, SDKs) live separately f
 
 | Sub-folder | Contains |
 |---|---|
+| `external-clients/` | Wrappers for third-party libraries used by this feature only (ts-morph, git, etc.). Same concept as platform/infra/external-clients/ but scoped to one feature |
 | `mappers/` | Response/format mapping (domain result → external format) |
 | `middleware/` | Feature-specific middleware (validation, rate limiting for this feature only) |
 | `persistence/` | Repository implementations (the concrete database code behind domain contracts) |
@@ -321,6 +322,7 @@ Which layers can access which infra sub-folders:
 | `messaging/` | ✅ | ✅ | ❌ | ❌ |
 | `config/` | ✅ | ✅ | ✅ | ❌ |
 | `logging/` | ✅ | ✅ | ✅ | ❌ |
+| `external-clients/` (feature) | ❌ | ✅ | ✅ | ❌ |
 | `mappers/` | ✅ | ❌ | ❌ | ❌ |
 | `middleware/` (feature) | ✅ | ❌ | ❌ | ❌ |
 | `middleware/` (platform) | ✅ | ❌ | ❌ | ❌ |
