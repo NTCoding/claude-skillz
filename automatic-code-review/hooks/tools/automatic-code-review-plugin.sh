@@ -7,6 +7,11 @@ if ! command -v jq >/dev/null 2>&1; then
   exit 0
 fi
 
+PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || {
+  echo "ERROR: not in a git repository" >&2
+  exit 0
+}
+
 COMMAND="${1:-}"
 
 if [[ -z "$COMMAND" ]]; then
@@ -119,13 +124,13 @@ get_modified_files() {
 get_or_initialize_plugin_settings() {
   local session_id="$1"
 
-  local settings_file=".claude/settings.json"
-  local rules_file=".claude/automatic-code-review/rules.md"
+  local settings_file="${PROJECT_ROOT}/.claude/settings.json"
+  local rules_file="${PROJECT_ROOT}/.claude/automatic-code-review/rules.md"
 
   if [[ ! -f "$settings_file" ]] || ! jq -e '.automaticCodeReview' "$settings_file" >/dev/null 2>&1; then
     local init_flag="/tmp/code-review-initialized-${session_id}"
     if [[ ! -f "$init_flag" ]]; then
-      mkdir -p .claude/automatic-code-review
+      mkdir -p "${PROJECT_ROOT}/.claude/automatic-code-review"
 
       local existing
       if [[ -f "$settings_file" ]]; then
