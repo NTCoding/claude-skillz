@@ -32,13 +32,7 @@
       "description": "Periodic full codebase review using automatic-code-review rules. Reviews entire codebase, not just modified files.",
       "version": "1.0.1",
       "category": "development",
-      "keywords": [
-        "code-review",
-        "tech-debt",
-        "codebase-analysis",
-        "periodic-review",
-        "quality"
-      ]
+      "keywords": ["code-review", "tech-debt", "codebase-analysis", "periodic-review", "quality"]
     },
     {
       "name": "track-and-improve",
@@ -62,13 +56,7 @@
       "description": "Analyze PR feedback patterns from CodeRabbit, SonarQube, and reviewers to suggest config updates that catch issues locally",
       "version": "1.0.0",
       "category": "development",
-      "keywords": [
-        "pr-review",
-        "feedback",
-        "learning",
-        "code-quality",
-        "conventions"
-      ]
+      "keywords": ["pr-review", "feedback", "learning", "code-quality", "conventions"]
     },
     {
       "name": "challenge-that",
@@ -76,13 +64,7 @@
       "description": "Force critical evaluation of proposals from 5 adversarial perspectives (Skeptic, Pragmatist, Edge Case Hunter, Structural Critic, Root Cause Analyst)",
       "version": "1.0.0",
       "category": "productivity",
-      "keywords": [
-        "critical-thinking",
-        "evaluation",
-        "review",
-        "proposals",
-        "decisions"
-      ]
+      "keywords": ["critical-thinking", "evaluation", "review", "proposals", "decisions"]
     },
     {
       "name": "architect-refine-critique",
@@ -90,13 +72,7 @@
       "description": "Three-phase design review producing an ADR: Architect → Refiner → Critique → Interactive Review. Run /arc-review after to produce the ADR. Run /arc-prd to add architecture section to a PRD.",
       "version": "1.6.1",
       "category": "development",
-      "keywords": [
-        "architecture",
-        "design-review",
-        "refactoring",
-        "ddd",
-        "separation-of-concerns"
-      ]
+      "keywords": ["architecture", "design-review", "refactoring", "ddd", "separation-of-concerns"]
     },
     {
       "name": "session-optimizer",
@@ -112,13 +88,7 @@
       "description": "Two-agent optimization team: researcher proposes, critic challenges, lead presents synthesized result",
       "version": "1.0.0",
       "category": "productivity",
-      "keywords": [
-        "optimization",
-        "agent-teams",
-        "research",
-        "critique",
-        "claude-code"
-      ]
+      "keywords": ["optimization", "agent-teams", "research", "critique", "claude-code"]
     },
     {
       "name": "claude-code-updates",
@@ -126,13 +96,7 @@
       "description": "Detects Claude Code version updates and surfaces relevant new features. SessionStart hook nudges on updates, /whats-new command analyzes changelog and blog for applicable changes.",
       "version": "1.0.0",
       "category": "productivity",
-      "keywords": [
-        "updates",
-        "changelog",
-        "features",
-        "version-tracking",
-        "release-notes"
-      ]
+      "keywords": ["updates", "changelog", "features", "version-tracking", "release-notes"]
     },
     {
       "name": "development-skills",
