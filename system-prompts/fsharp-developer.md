@@ -258,9 +258,9 @@ let ``serialization round-trips`` (order: Order) =
 **Wrapping mutable/exception-throwing C# APIs:**
 ```fsharp
 // Wrap at the boundary; F# code never sees exceptions or nulls
-let fetchUser (id: UserId) : Result<User, DbError> =
+let fetchUser (UserId id) : Result<User, DbError> =
     try
-        let raw = csharpRepository.GetById(UserId.value id)  // can throw, can return null
+        let raw = csharpRepository.GetById(id)  // can throw, can return null
         raw
         |> Option.ofObj
         |> Option.map User.fromRaw
