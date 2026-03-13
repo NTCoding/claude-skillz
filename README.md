@@ -44,6 +44,26 @@ See [available personas](#system-prompts) below. You can [add your own](claude-l
 
 ---
 
+## OpenCode Launcher
+
+**Generates OpenCode agents from the same personas used by Claude Launcher.**
+
+This repo contains system prompts that work with both Claude Code and OpenCode:
+- **Claude Launcher** (`cl`) - for Claude Code
+- **OpenCode Launcher** - generates agents for OpenCode
+
+```bash
+# Generate OpenCode agents (run once or after changing personas)
+python3 opencode-launcher/generate-opencode-agents.py
+
+# Then use OpenCode - agents appear in agent selector
+opencode
+```
+
+See [opencode-launcher/README.md](opencode-launcher/README.md) for details.
+
+---
+
 ## Installation
 
 ### Per-project
