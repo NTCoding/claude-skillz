@@ -345,20 +345,26 @@ def interactive_select(personas: Dict[str, Path]) -> Tuple[Path, str]:
             print(f"  {i}) {shortcut:<4} → {name}")
 
         while True:
-            try:
-                choice = input("\nEnter number: ").strip()
-                if choice.lower() == 'q':
-                    print("Cancelled")
-                    sys.exit(0)
+            choice = input("\nEnter number or shortcut: ").strip()
+            if choice.lower() == 'q':
+                print("Cancelled")
+                sys.exit(0)
 
+            # Try shortcut match first
+            if choice in persona_list:
+                selected_persona = personas[choice]
+                break
+
+            # Try numeric index
+            try:
                 idx = int(choice) - 1
                 if 0 <= idx < len(persona_list):
                     selected_persona = personas[persona_list[idx]]
                     break
                 else:
-                    print("Invalid selection. Try again.")
+                    print(f"Invalid selection. Enter 1-{len(persona_list)} or a shortcut.")
             except ValueError:
-                print("Invalid input. Try again.")
+                print(f"Invalid input. Enter a number or shortcut (e.g. tdd, opt).")
 
     # Step 2: Select model
     model_list = list(MODELS.keys())
@@ -385,20 +391,26 @@ def interactive_select(personas: Dict[str, Path]) -> Tuple[Path, str]:
 
         selected_model = None
         while True:
-            try:
-                choice = input("\nEnter number: ").strip()
-                if choice.lower() == 'q':
-                    print("Cancelled")
-                    sys.exit(0)
+            choice = input("\nEnter number or shortcut: ").strip()
+            if choice.lower() == 'q':
+                print("Cancelled")
+                sys.exit(0)
 
+            # Try shortcut match first
+            if choice in model_list:
+                selected_model = choice
+                break
+
+            # Try numeric index
+            try:
                 idx = int(choice) - 1
                 if 0 <= idx < len(model_list):
                     selected_model = model_list[idx]
                     break
                 else:
-                    print("Invalid selection. Try again.")
+                    print(f"Invalid selection. Enter 1-{len(model_list)} or a shortcut.")
             except ValueError:
-                print("Invalid input. Try again.")
+                print(f"Invalid input. Enter a number or shortcut (e.g. opus, sonn, haik).")
 
     return selected_persona, selected_model
 
