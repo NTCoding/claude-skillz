@@ -362,9 +362,9 @@ def interactive_select(personas: Dict[str, Path]) -> Tuple[Path, str]:
                     selected_persona = personas[persona_list[idx]]
                     break
                 else:
-                    print(f"Invalid selection. Enter 1-{len(persona_list)} or a shortcut.")
+                    print(f"Invalid selection. Try again.")
             except ValueError:
-                print(f"Invalid input. Enter a number or shortcut (e.g. tdd, opt).")
+                print(f"Invalid input. Try again.")
 
     # Step 2: Select model
     model_list = list(MODELS.keys())
@@ -408,9 +408,9 @@ def interactive_select(personas: Dict[str, Path]) -> Tuple[Path, str]:
                     selected_model = model_list[idx]
                     break
                 else:
-                    print(f"Invalid selection. Enter 1-{len(model_list)} or a shortcut.")
+                    print(f"Invalid selection. Try again.")
             except ValueError:
-                print(f"Invalid input. Enter a number or shortcut (e.g. opus, sonn, haik).")
+                print(f"Invalid input. Try again.")
 
     return selected_persona, selected_model
 
