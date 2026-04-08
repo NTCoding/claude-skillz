@@ -11,6 +11,7 @@ Features:
 - Team support: declarative teams via teams/*/team.yaml
 - Worktree passthrough: -w / --worktree [name]
 - Sandbox mode: --sandbox [repo-path] (runs via docker sandbox)
+- Claude params: --claude-params / -cp "<flags>" (extra flags forwarded to claude)
 """
 
 import json
@@ -18,6 +19,7 @@ import os
 import sys
 import subprocess
 import re
+import shlex
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 
@@ -345,20 +347,26 @@ def interactive_select(personas: Dict[str, Path]) -> Tuple[Path, str]:
             print(f"  {i}) {shortcut:<4} → {name}")
 
         while True:
-            try:
-                choice = input("\nEnter number: ").strip()
-                if choice.lower() == 'q':
-                    print("Cancelled")
-                    sys.exit(0)
+            choice = input("\nEnter number or shortcut: ").strip()
+            if choice.lower() == 'q':
+                print("Cancelled")
+                sys.exit(0)
 
+            # Try shortcut match first
+            if choice in persona_list:
+                selected_persona = personas[choice]
+                break
+
+            # Try numeric index
+            try:
                 idx = int(choice) - 1
                 if 0 <= idx < len(persona_list):
                     selected_persona = personas[persona_list[idx]]
                     break
                 else:
-                    print("Invalid selection. Try again.")
+                    print(f"Invalid selection. Try again.")
             except ValueError:
-                print("Invalid input. Try again.")
+                print(f"Invalid input. Try again.")
 
     # Step 2: Select model
     model_list = list(MODELS.keys())
@@ -385,20 +393,26 @@ def interactive_select(personas: Dict[str, Path]) -> Tuple[Path, str]:
 
         selected_model = None
         while True:
-            try:
-                choice = input("\nEnter number: ").strip()
-                if choice.lower() == 'q':
-                    print("Cancelled")
-                    sys.exit(0)
+            choice = input("\nEnter number or shortcut: ").strip()
+            if choice.lower() == 'q':
+                print("Cancelled")
+                sys.exit(0)
 
+            # Try shortcut match first
+            if choice in model_list:
+                selected_model = choice
+                break
+
+            # Try numeric index
+            try:
                 idx = int(choice) - 1
                 if 0 <= idx < len(model_list):
                     selected_model = model_list[idx]
                     break
                 else:
-                    print("Invalid selection. Try again.")
+                    print(f"Invalid selection. Try again.")
             except ValueError:
-                print("Invalid input. Try again.")
+                print(f"Invalid input. Try again.")
 
     return selected_persona, selected_model
 
@@ -408,8 +422,9 @@ def extract_passthrough_flags(args: list) -> Tuple[list, list, Optional[str]]:
     Extract Claude Code flags that should be passed through unchanged.
 
     Currently supports:
-    - -w / --worktree [name]  (name is optional)
-    - --sandbox               (sandbox mode: uses cwd, auto-adds --worktree)
+    - -w / --worktree [name]         (name is optional)
+    - --sandbox                       (sandbox mode: uses cwd, auto-adds --worktree)
+    - --claude-params "<flags>"       (extra flags passed directly to claude, e.g. "--teammate-mode tmux")
 
     Returns:
         (remaining_args, passthrough_flags, sandbox_repo) where:
@@ -442,6 +457,20 @@ def extract_passthrough_flags(args: list) -> Tuple[list, list, Optional[str]]:
             passthrough.append("--worktree")
             if name:
                 passthrough.append(name)
+            i += 1
+            continue
+
+        if arg in ("--claude-params", "-cp"):
+            if i + 1 >= len(args):
+                print(f"✗ ERROR: --claude-params requires a value (e.g. --claude-params \"--teammate-mode tmux\")", file=sys.stderr)
+                sys.exit(1)
+            i += 1
+            try:
+                extra = shlex.split(args[i])
+            except ValueError as e:
+                print(f"✗ ERROR: Could not parse --claude-params value: {e}", file=sys.stderr)
+                sys.exit(1)
+            passthrough.extend(extra)
             i += 1
             continue
 
